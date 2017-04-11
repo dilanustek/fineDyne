@@ -1,0 +1,63 @@
+html, body {
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 12px;
+}
+.canvas {
+  overflow: hidden;
+}
+.canvas .wrapper.outer > .background {
+  fill: #FED69B;
+}
+.canvas .wrapper.inner > .background {
+  fill: #CCCCCC;
+  cursor: move;
+}
+.canvas .background {
+  fill: #F6F6F6;
+  stroke: #333333;
+  cursor: move;
+}
+.canvas .panCanvas {
+  cursor: move;
+}
+
+.canvas .minimap .frame .background {
+  stroke: #111111;
+  stroke-width: 4px;
+  fill-opacity: 0.4;
+  fill: #000000;
+  fill: url(#minimapGradient_1);
+  filter: url(#minimapDropShadow_1);
+  cursor: move;
+}
+
+.wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+}
+
+.map_mesh {
+    fill: none;
+    stroke: #C64800;
+    stroke-width: .5px;
+    stroke-linejoin: round;
+}
+
+.map_outline {
+    fill: #ddd;
+    stroke: #000;
+    stroke-width: 1.5px;
+}
+
+.map_neighbourhood {
+    fill: #FED69B;
+}
+
+.map_neighbourhood:hover {
+    fill: #e27a00;
+    cursor: pointer;
+}
