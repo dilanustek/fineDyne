@@ -1,5 +1,6 @@
 d3.demo = {};
 
+var allCoordinates = [];
 
 // With help from - http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922
 var mapWidth = 550,
@@ -42,37 +43,52 @@ d3.json("toronto_topo.json", function(error, toronto) {
       .scale(s)
       .translate(t);
 
-      aa = [-79.396564, 43.627780];
-    bb = [-122.389809, 37.72728];
+  d3.csv("italian.csv", function(error, data) {
+        if (error) throw error;
 
-  // get individual neighbourhoods
-  svgMap.selectAll("path")
-        .data(neighbourhoods.features)
-      .enter().append("path")
-        .attr("class", "map_neighbourhood")
-        .attr("d", path)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout)
-        .on("click", clicked)
-
-  // add the mesh/path between neighbourhoods
-  svgMap.append("path")
-        .datum(topojson.mesh(toronto, toronto.objects.toronto, function(a, b) { return a !== b; }))
-        .attr("class", "map_mesh")
-        .attr("d", path);
+        data.forEach(function(d) {
+          var itemCoord = [d.longitude , d.latitude];
+          console.log(itemCoord);
+          allCoordinates.push( itemCoord);
+        });
 
 
-  // add circles to svg
-  // restaurants.map(r => r["coord"])
-  svgMap.selectAll("circle")
-  .data([aa,bb]).enter()
-  .append("circle")
-  .attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
-  .attr("cy", function (d) { return projection(d)[1]; })
-  .attr("r", "4px")
-  .attr("fill", "red")
+        // 9 longitude and 10 latitude
+              aa = [-79.396564, 43.627780];
+              //var longitudes = csv[9];
+              // var lattitudes = csv[10];
 
-});
+          // get individual neighbourhoods
+          svgMap.selectAll("path")
+                .data(neighbourhoods.features)
+              .enter().append("path")
+                .attr("class", "map_neighbourhood")
+                .attr("d", path)
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout)
+                .on("click", clicked)
+
+          // add the mesh/path between neighbourhoods
+          svgMap.append("path")
+                .datum(topojson.mesh(toronto, toronto.objects.toronto, function(a, b) { return a !== b; }))
+                .attr("class", "map_mesh")
+                .attr("d", path);
+
+
+          // add circles to svg
+          // restaurants.map(r => r["coord"])
+          svgMap.selectAll("circle")
+          .data(allCoordinates).enter()
+          .append("circle")
+          .attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
+          .attr("cy", function (d) { return projection(d)[1]; })
+          .attr("r", "4px")
+          .attr("fill", "red")
+
+        });
+  });
+
+
 
 function mouseover(d) {
   mapLabel.text(d.properties.name.slice(0,-5)) // remove suffix id from name
