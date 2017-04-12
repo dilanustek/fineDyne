@@ -48,25 +48,18 @@ d3.json("toronto_topo.json", function(error, toronto) {
 
         data.forEach(function(d) {
           var itemCoord = [d.longitude , d.latitude];
-          console.log(itemCoord);
           allCoordinates.push( itemCoord);
         });
 
-
-        // 9 longitude and 10 latitude
-              aa = [-79.396564, 43.627780];
-              //var longitudes = csv[9];
-              // var lattitudes = csv[10];
-
           // get individual neighbourhoods
           svgMap.selectAll("path")
-                .data(neighbourhoods.features)
-              .enter().append("path")
+                .data(neighbourhoods.features).enter()
+                .append("path")
                 .attr("class", "map_neighbourhood")
                 .attr("d", path)
-                .on("mouseover", mouseover)
-                .on("mouseout", mouseout)
-                .on("click", clicked)
+                .on("mouseover", mouseoverNeighborhood)
+                .on("mouseout", mouseoutNeighborhood)
+                .on("click", clickedNeighborhood)
 
           // add the mesh/path between neighbourhoods
           svgMap.append("path")
@@ -80,27 +73,31 @@ d3.json("toronto_topo.json", function(error, toronto) {
           svgMap.selectAll("circle")
           .data(allCoordinates).enter()
           .append("circle")
-          .attr("cx", function (d) { console.log(projection(d)); return projection(d)[0]; })
+          .attr("cx", function (d) { return projection(d)[0]; })
           .attr("cy", function (d) { return projection(d)[1]; })
           .attr("r", "4px")
           .attr("fill", "red")
+          .on("click", function(d) { console.log(d[0]); })
 
         });
   });
 
 
 
-function mouseover(d) {
+function mouseoverNeighborhood(d) {
   mapLabel.text(d.properties.name.slice(0,-5)) // remove suffix id from name
 }
 
-function mouseout(d) {
+function mouseoutNeighborhood(d) {
   mapLabel.text("")  // remove out name
 }
 
-function clicked(d) {
+function clickedNeighborhood(d) {
   console.log(d.properties.id, d.properties.name) // verify everything looks good
-  // Add code here
+}
+
+function clickedCircle(cx) {
+  console.log(cx) // verify everything looks good
 }
 
 
