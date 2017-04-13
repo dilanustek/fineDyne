@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>Just testing dc.js leaflet POC</title>
+	<title>FineDyne</title>
 
-	<meta itemprop="name" content="Just testing dc.js leaflet POC"/>
-	<meta itemprop="description" content="Just testing dc.js leaflet POC"/>
+	<meta itemprop="name" content="FineDyne"/>
+	<meta itemprop="description" content="FineDyne"/>
 
 	<meta charset="UTF-8">
 
@@ -71,16 +71,26 @@
       var restaurants = xf.dimension(function(d) {
 				return d.latitude + ","+ d.longitude;
 			});
+			var name = xf.dimension(function(d) {
+				return d.name;
+			});
       var restaurantsGroup = restaurants.group().reduceCount();
 
-      var marker = dc_leaflet.markerChart("#demo1 .map",groupname) //map formatting
+      var marker = dc_leaflet.markerChart("#demo1 .map", groupname) //map formatting
           .dimension(restaurants)
           .group(restaurantsGroup)
           .width(700) //was 600
           .height(500)
           .center([43.733372, -79.354782]) //was 42.69,25.42
           .zoom(11) //was 7s
-          .cluster(true); //was true
+          .cluster(true) //was true
+					.renderPopup(true)			
+          .popup(function(d,feature) {
+						console.log(d)
+						//console.log(feature)
+							console.log(d + " - " + feature + " - " + d.name);
+              return d.name;
+          });
 
       var types = xf.dimension(function(d) { return d.type; });
       var typesGroup = types.group().reduceCount();
