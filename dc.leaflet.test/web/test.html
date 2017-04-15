@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>Just testing dc.js leaflet POC</title>
+
+	<meta itemprop="name" content="Just testing dc.js leaflet POC"/>
+	<meta itemprop="description" content="Just testing dc.js leaflet POC"/>
+
+	<meta charset="UTF-8">
+
+	<link type="text/css" href="css/leaflet.css" rel="stylesheet"/>
+	<link type="text/css" href="css/MarkerCluster.Default.css" rel="stylesheet"/>
+	<link type="text/css" href="css/MarkerCluster.css" rel="stylesheet"/>
+	<link type="text/css" href="css/dc.css" rel="stylesheet"/>
+	<link type="text/css" href="css/leaflet-legend.css" rel="stylesheet"/>
+
+  <style>
+    #holder {
+      width:850px;
+      margin:20px auto;
+    }
+    #holder>div {
+      padding:30px 0;
+      clear:both;
+    }
+    .map {
+      width:600px;
+      height:400px;
+    }
+    .pie {
+      margin-left:30px;
+    }
+
+    /*map legend styling*/
+    /*--*/
+  </style>
+</head>
+<body>
+
+<div id="holder">
+  <div id="demo1">
+    <h2>Markers with clustering, popups and single selection</h2>
+    <i>Renewable energy plants in Bulgaria in 2012</i>
+    <div class="map"></div>
+    <div class="pie"></div>
+  </div>
+
+</div>
+
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/crossfilter.js"></script>
+<script type="text/javascript" src="js/dc.js"></script>
+<script type="text/javascript" src="js/leaflet.js"></script>
+<script src="js/colorbrewer.js"></script>
+
+
+<!--Optional-->
+<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
+<script type="text/javascript" src="js/dc.leaflet.js"></script>
+
+<!--- dc-addons -->
+<link rel="stylesheet" href="../bower_components/leaflet/dist/leaflet.css" />
+<script src="../bower_components/leaflet/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="../bower_components/leaflet.markercluster/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="../bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+<script src="../bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<script src="../bower_components/dc-addons/dist/leaflet-map/dc-leaflet.min.js"></script>
+
+
+<script type="text/javascript">
+
+  /*     Markers      */
+
+  d3.tsv("demo1.tsv", function(data) {
+      drawMarkerSelect(data);
+  });
+
+  function drawMarkerSelect(data) {
+      var xf = crossfilter(data);
+      var groupname = "marker-select";
+
+					var restaurants = xf.dimension(function(d) {
+						return d.name;
+					});
+		      var restaurantsGroup = restaurants.group().reduce(
+							function(p, v) { // add
+			        p.items = v.items;
+			        p.geo = v.geo;
+			        ++p.count;
+			        return p;
+			    		},
+			    		function(p, v) { // remove
+			        	--p.count;
+			        	return p;
+			    		},
+			    		function() { // init
+			        	return {count: 0};
+			    		}
+					);
+
+					dc.leafletMarkerChart("#demo1 .map",groupname)
+							.dimension(restaurants)
+							.group(restaurantsGroup)
+							.width(700) //was 600
+							.height(500)
+							.center([42.69,25.42]) //was 42.69,25.42
+							.zoom(11) //was 7s
+							.cluster(true) //was true
+					    .valueAccessor(function(kv) {
+					        return kv.value.count;
+					    })
+					    .locationAccessor(function(kv) {
+					        return kv.value.geo;
+					    })
+							.renderPopup(true)
+					    .popup(function(kv) {
+					        return kv.key + " : " + kv.value.items;
+					    });
+
+
+
+      var types = xf.dimension(function(d) { return d.type; });
+      var typesGroup = types.group().reduceCount();
+
+      var pie = dc.pieChart("#demo1 .pie",groupname)
+          .dimension(types)
+          .group(typesGroup)
+          .width(200) //was 200
+          .height(200)
+          .renderLabel(true) //was true
+          .renderTitle(true) //was true
+          .ordering(function (p) {
+              return -p.value; //was -p.value
+          });
+
+      dc.renderAll(groupname);
+    //  return {marker: marker, pie: pie};
+  }
+
+
+</script>
+
+</body>
+</html>
