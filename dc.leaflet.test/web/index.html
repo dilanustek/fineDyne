@@ -106,7 +106,7 @@
 var xf;
 var priceDimension;
 
-  d3.csv("italian.csv", function(data) {
+  d3.csv("italian_indian.csv", function(data) {
 			allData = data;
       drawMarkerSelect(allData);
   });
@@ -115,6 +115,7 @@ var priceDimension;
       xf = crossfilter(data);
       var groupname = "marker-select";
 
+// Prices bar graph
 			priceDimension = xf.dimension(function(d) {
 					 return d.price_range;
 			});
@@ -136,7 +137,7 @@ var priceDimension;
     								});
 								});
 
-
+// Map
 			var restaurantNames  = xf.dimension(function(d) {
 				return d.name;
 			});
@@ -180,7 +181,7 @@ var priceDimension;
 
 
 
-
+// Stars bar graph
 		var stars = xf.dimension(function(d) {
 							return d.stars;
 						});
@@ -210,7 +211,8 @@ var priceDimension;
 									});
 							});
 
-/*
+
+// Categories bar graph
 							var categories = xf.dimension(function(d) {
 												return d.cuisine;
 											});
@@ -224,7 +226,7 @@ var priceDimension;
 												.renderLabel(false) //was true
 												//.renderTitle(true) //was true
 												.x(d3.scale.ordinal())
-										.xUnits(dc.units.ordinal)
+														.xUnits(dc.units.ordinal)
 									//	.barPadding(0.02)
 									//  .outerPadding(0.01)
 										 // .elasticY(true)
@@ -234,16 +236,18 @@ var priceDimension;
 												//     return -p.value; //was -p.value
 												// })
 												.brushOn(true)
-												.on('renderlet', function(chart) {
-														chart.selectAll('rect').on("click", function(d) {
-															console.log("click!", d);
-														})
+												.on('renderlet.barclicker', function(chart, filter){
+				    								chart.selectAll('rect.bar').on('click.custom', function(d) {
+				        						console.log(d);
+				    								});
 												});
-*/
+
 
       dc.renderAll(groupname);
       return {marker: marker, priceBar:priceBar, starBar: starBar};
   }
+
+
 
 /*
 	function redrawMarkerSelect() {
