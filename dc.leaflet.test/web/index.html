@@ -19,7 +19,7 @@
       width:700px;
       height:500px;
     }
-    .pie {
+    .starBar {
       margin-right:30px;
     }
 
@@ -49,7 +49,8 @@
 
 <div id="demo1">
     <h2>FineDyne in Toronto</h2>
-		<div class="pie"></div>
+		<div class="priceBar"></div>
+		<div class="starBar"></div>
     <div class="map"></div>
 </div>
 
@@ -84,16 +85,6 @@
 			return value != item;
 		});
 		}
-		//
-		// console.log("new = " + $(this).attr('value'));
-		// console.log("selected = " + selected);
-
-		//$( ".map" ).empty();
-		//$( ".pie" ).empty();
-
-		//resetData(ndx, [yearDim, spendDim, nameDim]);
-	   //  ndx.add(data2);
-	   //  dc.redrawAll();
 
 		redrawMarkerSelect(allData);
  	});
@@ -103,7 +94,7 @@
 // 		console.log("new = " + this.value);
 // 		console.log("selected = " + selected);
 // 		$( ".map" ).empty();
-// 		$( ".pie" ).empty();
+// 		$( ".starBar" ).empty();
 // 		drawMarkerSelect(allData);
 // 	}).get();
 
@@ -127,6 +118,33 @@ var priceDimension;
 					 return d.price_range;
 			});
 
+			var priceGroup = priceDimension.group().reduceCount();
+
+			var priceBar = dc.barChart("#demo1 .priceBar",groupname)
+			          .dimension(priceDimension)
+			          .group(priceGroup)
+			          .width(300) //was 200
+			          .height(200)
+			          .renderLabel(false) //was true
+			          //.renderTitle(true) //was true
+								.x(d3.scale.ordinal())
+	          .xUnits(dc.units.ordinal)
+					//	.barPadding(0.02)
+	        //  .outerPadding(0.01)
+						 // .elasticY(true)
+								// .x(d3.scale.linear().domain([1,5]))
+								//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
+			          // .ordering(function (p) {
+			          //     return -p.value; //was -p.value
+			          // })
+								.brushOn(true)
+								.on('renderlet', function(chart) {
+	        					chart.selectAll('rect').on("click", function(d) {
+	            				console.log("click!", d);
+	        					})
+								});
+
+
 			var restaurantNames  = xf.dimension(function(d) {
 				return d.name;
 			});
@@ -176,21 +194,32 @@ var priceDimension;
 						});
 		var starsGroup = stars.group().reduceCount();
 
-		var pie = dc.pieChart("#demo1 .pie",groupname)
+		var starBar = dc.barChart("#demo1 .starBar",groupname)
 		          .dimension(stars)
 		          .group(starsGroup)
-							//.filter()
-		          .width(200) //was 200
+		          .width(300) //was 200
 		          .height(200)
-		          .renderLabel(true) //was true
-		          .renderTitle(true) //was true
-		          .ordering(function (p) {
-		              return -p.value; //was -p.value
-		          });
-
+		          .renderLabel(false) //was true
+		          //.renderTitle(true) //was true
+							.x(d3.scale.ordinal())
+          .xUnits(dc.units.ordinal)
+				//	.barPadding(0.02)
+        //  .outerPadding(0.01)
+					 // .elasticY(true)
+							// .x(d3.scale.linear().domain([1,5]))
+							//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
+		          // .ordering(function (p) {
+		          //     return -p.value; //was -p.value
+		          // })
+							.brushOn(true)
+							.on('renderlet', function(chart) {
+        					chart.selectAll('rect').on("click", function(d) {
+            				console.log("click!", d);
+        					})
+							});
 
       dc.renderAll(groupname);
-      return {marker: marker, pie: pie};
+      return {marker: marker, starBar: starBar};
   }
 
 	function redrawMarkerSelect() {
@@ -201,21 +230,6 @@ var priceDimension;
 		console.log("after add", xf.size());*/
 
 		var groupname = "marker-select";
-
-		// var prices = xf.dimension(function(d) {
-		// 		 return d.price_range;
-		// }).filter(function (d) {
-		// 		if (selected.length == 0){
-		// 			console.log("nothing selected");
-		// 			return d;
-		// 		} else {
-		//
-		// 			if(selected.indexOf(d)>-1){
-		// 				console.log("selected - " + d);
-		// 				return d;
-		// 			}
-		// 		}
-		// 	});
 
 		priceDimension.filterAll()
 		.filter(function (d) {
@@ -233,107 +247,6 @@ var priceDimension;
 
 		dc.redrawAll(groupname);
 }
-
-
-	/* function redrawMarkerSelect(data) {
-      var xf = crossfilter(data);
-      var groupname = "marker-select";
-
-			var prices = xf.dimension(function(d) {
-					 return d.price_range;
-			}).filter(
-				function (d) {
-					if (selected.length == 0){
-						console.log("nothing selected");
-						return d;
-					} else {
-
-
-						var checkedCheckboxesValues =
-    							$('input:checkbox[class="group1"]:checked')
-        .map(function() {
-						console.log("selected val = " +  $(this).val())
-            if (d ==  $(this).val())
-							return d;
-        }).get();
-
-
-						// selected.forEach(
-						// function(price){
-						// 	if (d == selected.value)
-						// 		console.log("selected - " + price.value);
-						// 		return d;
-						// }
-					//)
-				}
-
-				}
-			);
-
-			var restaurantNames  = xf.dimension(function(d) {
-				return d.name;
-			});
-
-      var restaurantsGroup = restaurantNames.group().reduce(
-					function(p, v) { // add
-					p.name = v.name;
-					p.price_range = v.price_range;
-					p.stars = v.stars;
-					p.latitude = v.latitude;
-					p.longitude = v.longitude;
-	        ++p.count;
-	        return p;
-	    		},
-	    		function(p, v) { // remove
-	        	--p.count;
-	        	return p;
-	    		},
-	    		function() { // init
-	        	return {count: 0};
-	    		}
-			);
-
-      marker = dc_leaflet.markerChart("#demo1 .map", groupname) //map formatting
-          .dimension(restaurantNames)
-          .group(restaurantsGroup)
-          .width(700) //was 600
-          .height(500)
-          .center([43.733372, -79.354782]) //was 42.69,25.42
-          .zoom(11) //was 7s
-          .cluster(true) //was true
-					.valueAccessor(function(kv) {
-			         return kv.value.count;
-			    })
-			    .locationAccessor(function(kv) {
-						return [kv.value.latitude,kv.value.longitude]	;
-			    })
-          .popup(function(kv,marker) {
-              return kv.value.name + " - " + kv.value.stars + " * - "  + kv.value.price_range + "$";
-          });
-
-
-
-
-		var stars = xf.dimension(function(d) {
-							return d.stars;
-						});
-		var starsGroup = stars.group().reduceCount();
-
-		var pie = dc.pieChart("#demo1 .pie",groupname)
-		          .dimension(stars)
-		          .group(starsGroup)
-							//.filter()
-		          .width(200) //was 200
-		          .height(200)
-		          .renderLabel(true) //was true
-		          .renderTitle(true) //was true
-		          .ordering(function (p) {
-		              return -p.value; //was -p.value
-		          });
-
-      dc.redrawAll(groupname);
-  //    return {marker: marker, pie: pie};
-}*/
 
 
 </script>
