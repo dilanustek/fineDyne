@@ -29,6 +29,7 @@
 </head>
 <body>
 
+<!--
 	<div id="priceRange">
 			 <fieldset>
 		     <label for="checkbox-nested-1">$
@@ -44,8 +45,8 @@
 		       <input type="checkbox" class="group1" value="4">
 		     </label>
 		   </fieldset>
-
 	</div>
+-->
 
 <div id="demo1">
     <h2>FineDyne in Toronto</h2>
@@ -75,7 +76,7 @@
 	var allData;
 	var marker;
 
-	var selected = [];
+	/*var selected = [];
 	$(':checkbox').change(function () {
 		var item = $(this).attr('value');
 
@@ -89,6 +90,7 @@
 
 		redrawMarkerSelect(allData);
  	});
+*/
 
 // var selected = [];
 // 	var values = $('input:checkbox:checked.group1').map(function () {
@@ -100,8 +102,6 @@
 // 	}).get();
 
 
-
-  /*     Markers      */
 
 var xf;
 var priceDimension;
@@ -204,10 +204,10 @@ var priceDimension;
 		          //     return -p.value; //was -p.value
 		          // })
 							.brushOn(true)
-							.on('renderlet', function(chart) {
-        					chart.selectAll('rect').on("click", function(d) {
-            				console.log("click!", d);
-        					})
+							.on('renderlet.barclicker', function(chart, filter){
+									chart.selectAll('rect.bar').on('click.custom', function(d) {
+									console.log(d);
+									});
 							});
 
 /*
@@ -245,13 +245,14 @@ var priceDimension;
       return {marker: marker, priceBar:priceBar, starBar: starBar};
   }
 
+/*
 	function redrawMarkerSelect() {
 		/*console.log("before", xf.size());
 		xf.remove();
 		console.log("after remove", xf.size());
 		xf.add(allData);
 		console.log("after add", xf.size());*/
-
+/*
 		var groupname = "marker-select";
 
 		priceDimension.filterAll()
@@ -270,7 +271,7 @@ var priceDimension;
 
 		dc.redrawAll(groupname);
 }
-
+*/
 
 </script>
 
