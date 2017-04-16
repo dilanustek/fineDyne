@@ -51,6 +51,7 @@
     <h2>FineDyne in Toronto</h2>
 		<div class="priceBar"></div>
 		<div class="starBar"></div>
+		<div class="categoriesBar"></div>
     <div class="map"></div>
 </div>
 
@@ -126,22 +127,13 @@ var priceDimension;
 			          .width(300) //was 200
 			          .height(200)
 			          .renderLabel(false) //was true
-			          //.renderTitle(true) //was true
 								.x(d3.scale.ordinal())
-	          .xUnits(dc.units.ordinal)
-					//	.barPadding(0.02)
-	        //  .outerPadding(0.01)
-						 // .elasticY(true)
-								// .x(d3.scale.linear().domain([1,5]))
-								//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
-			          // .ordering(function (p) {
-			          //     return -p.value; //was -p.value
-			          // })
+	          			.xUnits(dc.units.ordinal)
 								.brushOn(true)
-								.on('renderlet', function(chart) {
-	        					chart.selectAll('rect').on("click", function(d) {
-	            				console.log("click!", d);
-	        					})
+								.on('renderlet.barclicker', function(chart, filter){
+    								chart.selectAll('rect.bar').on('click.custom', function(d) {
+        						console.log(d);
+    								});
 								});
 
 
@@ -218,8 +210,39 @@ var priceDimension;
         					})
 							});
 
+/*
+							var categories = xf.dimension(function(d) {
+												return d.cuisine;
+											});
+							var categoriesGroup = categories.group().reduceCount();
+
+							var categoriesBar = dc.barChart("#demo1 .categoriesBar",groupname)
+												.dimension(categories)
+												.group(categoriesGroup)
+												.width(300) //was 200
+												.height(200)
+												.renderLabel(false) //was true
+												//.renderTitle(true) //was true
+												.x(d3.scale.ordinal())
+										.xUnits(dc.units.ordinal)
+									//	.barPadding(0.02)
+									//  .outerPadding(0.01)
+										 // .elasticY(true)
+												// .x(d3.scale.linear().domain([1,5]))
+												//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
+												// .ordering(function (p) {
+												//     return -p.value; //was -p.value
+												// })
+												.brushOn(true)
+												.on('renderlet', function(chart) {
+														chart.selectAll('rect').on("click", function(d) {
+															console.log("click!", d);
+														})
+												});
+*/
+
       dc.renderAll(groupname);
-      return {marker: marker, starBar: starBar};
+      return {marker: marker, priceBar:priceBar, starBar: starBar};
   }
 
 	function redrawMarkerSelect() {
