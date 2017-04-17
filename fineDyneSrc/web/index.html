@@ -13,6 +13,8 @@
 	<link type="text/css" href="css/MarkerCluster.css" rel="stylesheet"/>
 	<link type="text/css" href="css/dc.css" rel="stylesheet"/>
 	<link type="text/css" href="css/leaflet-legend.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
   <style>
     .map {
@@ -56,7 +58,7 @@
     <div class="map"></div>
 </div>
 
-<button type="button" class="reset" onclick="resetCharts()">Reset</button>
+<button type="btn" onclick="resetCharts()">Reset</button>
 
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -163,6 +165,9 @@ function drawMarkerSelect(data) {
 									return resultStr;
 								});
 
+		priceBar.yAxis().ticks(4);
+
+
 // Map
 	restaurantNamesDimension  = xf.dimension(function(d) {
 			return d.name;
@@ -238,6 +243,8 @@ function drawMarkerSelect(data) {
 							})
 							.ordinalColors(['#fce91e']);
 
+			starBar.yAxis().ticks(4);
+
 
 // Categories bar graph
 		categoriesDimension = xf.dimension(function(d) {
@@ -245,29 +252,32 @@ function drawMarkerSelect(data) {
 											});
 	 	var categoriesGroup = categoriesDimension.group().reduceCount();
 
-		categoriesBar = dc.barChart("#demo1 .categoriesBar",groupname)
+		categoriesBar = dc.rowChart("#demo1 .categoriesBar",groupname)
 												.dimension(categoriesDimension)
 												.group(categoriesGroup)
 												.width(300) //was 200
 												.height(200)
-												.renderLabel(false) //was true
+												.renderLabel(true) //was true
 												//.renderTitle(true) //was true
-												.x(d3.scale.ordinal())
-														.xUnits(dc.units.ordinal)
+												//.x(d3.scale.ordinal())
+												//		.xUnits(dc.units.ordinal)
+												//		.elasticX(true)
 									//	.barPadding(0.02)
 									//  .outerPadding(0.01)
 										 // .elasticY(true)
-												// .x(d3.scale.linear().domain([1,5]))
+												//.x(d3.scale.linear().domain([1,5]))
 												//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
 												// .ordering(function (p) {
 												//     return -p.value; //was -p.value
 												// })
-												.brushOn(true)
-												.on('renderlet.barclicker', function(chart, filter){
+												//.brushOn(true)
+												/*.on('renderlet.barclicker', function(chart, filter){
 				    								chart.selectAll('rect.bar').on('click.custom', function(d) {
 				        						console.log(d);
 				    								});
-												});
+												})*/;
+
+			categoriesBar.xAxis().ticks(4);
 
 
       dc.renderAll(groupname);
