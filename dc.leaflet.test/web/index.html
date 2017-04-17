@@ -56,6 +56,8 @@
     <div class="map"></div>
 </div>
 
+<button type="button" class="reset" onclick="resetCharts()">Reset</button>
+
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -73,8 +75,19 @@
 <script type="text/javascript" src="js/dc.leaflet.js"></script>
 <script type="text/javascript">
 
-	var allData;
-	var marker;
+var allData;
+var groupname = "marker-select";
+var xf;
+
+var priceDimension;
+var restaurantNamesDimension;
+var starsDimension;
+var categoriesDimension;
+
+var priceBar;
+var marker;
+var starBar;
+var categoriesBar;
 
 	/*var selected = [];
 	$(':checkbox').change(function () {
@@ -101,28 +114,32 @@
 // 		drawMarkerSelect(allData);
 // 	}).get();
 
+function resetCharts() {
+		marker.filterAll();
+		starBar.filterAll();
+		priceBar.filterAll();
+		categoriesBar.filterAll();
+
+		dc.redrawAll(groupname);
+}
 
 
-var xf;
-var priceDimension;
+d3.csv("italian_indian.csv", function(data) {
+		allData = data;
+    drawMarkerSelect(allData);
+});
 
-  d3.csv("italian_indian.csv", function(data) {
-			allData = data;
-      drawMarkerSelect(allData);
-  });
-
-  function drawMarkerSelect(data) {
-      xf = crossfilter(data);
-      var groupname = "marker-select";
+function drawMarkerSelect(data) {
+    xf = crossfilter(data);
 
 // Prices bar graph
-			priceDimension = xf.dimension(function(d) {
-					 return d.price_range;
-			});
+		priceDimension = xf.dimension(function(d) {
+				return d.price_range;
+		});
 
-			var priceGroup = priceDimension.group().reduceCount();
+		var priceGroup = priceDimension.group().reduceCount();
 
-			var priceBar = dc.barChart("#demo1 .priceBar",groupname)
+		priceBar = dc.barChart("#demo1 .priceBar",groupname)
 			          .dimension(priceDimension)
 			          .group(priceGroup)
 			          .width(300) //was 200
@@ -138,12 +155,12 @@ var priceDimension;
 								});
 
 // Map
-			var restaurantNames  = xf.dimension(function(d) {
-				return d.name;
-			});
+	restaurantNamesDimension  = xf.dimension(function(d) {
+			return d.name;
+	});
 
-      var restaurantsGroup = restaurantNames.group().reduce(
-					function(p, v) { // add
+  var restaurantsGroup = restaurantNamesDimension.group().reduce(
+			function(p, v) { // add
 					p.name = v.name;
 					p.price_range = v.price_range;
 					p.stars = v.stars;
@@ -161,8 +178,8 @@ var priceDimension;
 	    		}
 			);
 
-      marker = dc_leaflet.markerChart("#demo1 .map", groupname) //map formatting
-          .dimension(restaurantNames)
+		marker = dc_leaflet.markerChart("#demo1 .map", groupname) //map formatting
+          .dimension(restaurantNamesDimension)
           .group(restaurantsGroup)
           .width(700) //was 600
           .height(500)
@@ -182,13 +199,13 @@ var priceDimension;
 
 
 // Stars bar graph
-		var stars = xf.dimension(function(d) {
+		starsDimension = xf.dimension(function(d) {
 							return d.stars;
 						});
-		var starsGroup = stars.group().reduceCount();
+		var starsGroup = starsDimension.group().reduceCount();
 
-		var starBar = dc.barChart("#demo1 .starBar",groupname)
-		          .dimension(stars)
+		starBar = dc.barChart("#demo1 .starBar",groupname)
+		          .dimension(starsDimension)
 		          .group(starsGroup)
 		          .width(300) //was 200
 		          .height(200)
@@ -213,13 +230,13 @@ var priceDimension;
 
 
 // Categories bar graph
-							var categories = xf.dimension(function(d) {
+		categoriesDimension = xf.dimension(function(d) {
 												return d.cuisine;
 											});
-							var categoriesGroup = categories.group().reduceCount();
+	 	var categoriesGroup = categoriesDimension.group().reduceCount();
 
-							var categoriesBar = dc.barChart("#demo1 .categoriesBar",groupname)
-												.dimension(categories)
+		categoriesBar = dc.barChart("#demo1 .categoriesBar",groupname)
+												.dimension(categoriesDimension)
 												.group(categoriesGroup)
 												.width(300) //was 200
 												.height(200)
@@ -245,7 +262,7 @@ var priceDimension;
 
       dc.renderAll(groupname);
       return {marker: marker, priceBar:priceBar, starBar: starBar};
-  }
+}
 
 
 
@@ -257,7 +274,6 @@ var priceDimension;
 		xf.add(allData);
 		console.log("after add", xf.size());*/
 /*
-		var groupname = "marker-select";
 
 		priceDimension.filterAll()
 		.filter(function (d) {
