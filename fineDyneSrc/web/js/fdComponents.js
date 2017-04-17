@@ -52,7 +52,8 @@ function drawMarkerSelect(data) {
         						console.log(d);
     								});
 								})
-								.ordinalColors(['#28c619']);
+								.ordinalColors(['#28c619'])
+                 .yAxisLabel("# of restaurants");
 
 		priceBar.xAxis().tickFormat(function (v) {
 									var resultStr = '';
@@ -129,7 +130,8 @@ function drawMarkerSelect(data) {
 									console.log(d);
 									});
 							})
-							.ordinalColors(['#fce91e']);
+							.ordinalColors(['#fce91e'])
+              .yAxisLabel("# of restaurants");
 
 			starBar.yAxis().ticks(4);
 
