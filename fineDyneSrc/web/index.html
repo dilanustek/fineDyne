@@ -32,6 +32,11 @@
 	<script type="text/javascript" src="js/fdComponents.js"></script>
 
   <style>
+
+		.title {
+			margin-bottom: 25px;
+		}
+
     .map {
       width:700px;
       height:500px;
@@ -49,21 +54,31 @@
 			width: 1340px;
 		}
 
-		.inRowOppositeSides{
+		.inRowOppositeSides {
 			display: flex;
 			justify-content: flex-start;
 		}
 
-		.inColumn{
+		.inColumn {
 			display: flex;
 			flex-direction: column;
     	align-items: flex-start;
     	align-content: center;
 		}
 
-		.inRow{
+		.inRow {
 			display: flex;
 			justify-content: space-between;
+		}
+
+		.controls {
+			display: flex;
+			align-items: center;
+			margin-left: 100px;
+		}
+
+		.controlButtons {
+			font-size: 20px;
 		}
 
   </style>
@@ -71,22 +86,30 @@
 <body>
 
 <div class="container">
-    <h2>FineDyne in Toronto</h2>
+
+		<div class="title">
+    		<h1>FineDyne  <font size="5">in Toronto</font></h1>
+		</div>
 
 		<div class="inRowOppositeSides">
 				<div class="inColumn">
 						<div class="inRow">
-							<div class="priceBar"></div>
-							<div class="starBar"></div>
+								<div class="priceBar"></div>
+								<div class="starBar"></div>
 						</div>
 
-						<div class="categoriesBar"></div>
+						<div class="inRow">
+								<div class="categoriesBar"></div>
+								<div class="controls">
+										<button type="btn" class="controlButtons" onclick="resetCharts()">Reset All</button>
+								</div>
+						</div>
+
 				</div>
 
 				<div class="map"></div>
 		</div>
 
-		<button type="btn" onclick="resetCharts()">Reset</button>
 </div>
 
 
