@@ -38,7 +38,7 @@ function drawMarkerSelect(data) {
 
 		var priceGroup = priceDimension.group().reduceCount();
 
-		priceBar = dc.barChart("#demo1 .priceBar",groupname)
+		priceBar = dc.barChart(".container .priceBar",groupname)
 			          .dimension(priceDimension)
 			          .group(priceGroup)
 			          .width(300)
@@ -89,7 +89,7 @@ function drawMarkerSelect(data) {
 	    		}
 			);
 
-		marker = dc_leaflet.markerChart("#demo1 .map", groupname) //map formatting
+		marker = dc_leaflet.markerChart(".container .inRowOppositeSides .map", groupname) //map formatting
           .dimension(restaurantNamesDimension)
           .group(restaurantsGroup)
           .width(700) //was 600
@@ -115,7 +115,7 @@ function drawMarkerSelect(data) {
 						});
 		var starsGroup = starsDimension.group().reduceCount();
 
-		starBar = dc.barChart("#demo1 .starBar",groupname)
+		starBar = dc.barChart(".container .starBar",groupname)
 		          .dimension(starsDimension)
 		          .group(starsGroup)
 		          .width(300)
@@ -140,7 +140,7 @@ function drawMarkerSelect(data) {
 											});
 	 	var categoriesGroup = categoriesDimension.group().reduceCount();
 
-		categoriesBar = dc.rowChart("#demo1 .categoriesBar",groupname)
+		categoriesBar = dc.rowChart(".container .categoriesBar",groupname)
 												.dimension(categoriesDimension)
 												.group(categoriesGroup)
 												.width(300)
