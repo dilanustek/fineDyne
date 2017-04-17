@@ -11,6 +11,7 @@ var priceBar;
 var marker;
 var starBar;
 var categoriesBar;
+var dataTable;
 
 
 function resetCharts() {
@@ -167,6 +168,36 @@ function drawMarkerSelect(data) {
 												})*/;
 
 			categoriesBar.xAxis().ticks(4);
+
+// Data table
+      // var tableGroup = restaurantNamesDimension.group().reduce(
+      //     function(p, v) { // add
+      //         p.name = v.name;
+      //         p.price_range = v.price_range;
+      //         p.stars = v.stars;
+      //         p.latitude = v.latitude;
+      //         p.longitude = v.longitude;
+      //         return p;
+      //         },
+      //         function(p, v) { // remove
+      //           return p;
+      //         },
+      //         function() { // init
+      //           return;
+      //         }
+      //     );
+
+        datatable = dc.dataTable(".container .dataTable", groupname)
+                        .dimension(restaurantNamesDimension)
+                        .group(function(d) { return "List of restaurants"})
+                        // dynamic columns creation using an array of closures
+                        .columns([
+                          function(d) {console.log(d); return d.name;  },
+                          function(d) { return d.stars;  },
+                          function(d) { return d.price_range;  },
+                          function(d) { return d.neighborhood;  },
+                        ])
+                        .size(20);
 
 
       dc.renderAll(groupname);
