@@ -8,6 +8,7 @@
 
 	<meta charset="UTF-8">
 
+<!-- Stylesheets-->
 	<link type="text/css" href="css/leaflet.css" rel="stylesheet"/>
 	<link type="text/css" href="css/MarkerCluster.Default.css" rel="stylesheet"/>
 	<link type="text/css" href="css/MarkerCluster.css" rel="stylesheet"/>
@@ -15,6 +16,20 @@
 	<link type="text/css" href="css/leaflet-legend.css" rel="stylesheet"/>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!-- Scripts-->
+	<script type="text/javascript" src="js/d3.js"></script>
+	<script type="text/javascript" src="js/crossfilter.js"></script>
+	<script type="text/javascript" src="js/dc.js"></script>
+	<script type="text/javascript" src="js/leaflet.js"></script>
+	<script type="text/javascript" src="js/colorbrewer.js"></script>
+	<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
+	<script type="text/javascript" src="js/dc.leaflet.js"></script>
+
+	<script type="text/javascript" src="js/fdComponents.js"></script>
 
   <style>
     .map {
@@ -25,8 +40,6 @@
       margin-right:30px;
     }
 
-    /*map legend styling*/
-    /*--*/
   </style>
 </head>
 <body>
@@ -60,260 +73,6 @@
 
 <button type="btn" onclick="resetCharts()">Reset</button>
 
-
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-<script type="text/javascript" src="js/d3.js"></script>
-<script type="text/javascript" src="js/crossfilter.js"></script>
-<script type="text/javascript" src="js/dc.js"></script>
-<script type="text/javascript" src="js/leaflet.js"></script>
-<script src="js/colorbrewer.js"></script>
-
-<!--Optional-->
-<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
-
-<script type="text/javascript" src="js/dc.leaflet.js"></script>
-<script type="text/javascript">
-
-var allData;
-var groupname = "marker-select";
-var xf;
-
-var priceDimension;
-var restaurantNamesDimension;
-var starsDimension;
-var categoriesDimension;
-
-var priceBar;
-var marker;
-var starBar;
-var categoriesBar;
-
-	/*var selected = [];
-	$(':checkbox').change(function () {
-		var item = $(this).attr('value');
-
-		if ($(this).is(':checked')){
-    	selected.push(item);
-		} else {
-			selected = jQuery.grep(selected, function(value) {
-			return value != item;
-		});
-		}
-
-		redrawMarkerSelect(allData);
- 	});
-*/
-
-// var selected = [];
-// 	var values = $('input:checkbox:checked.group1').map(function () {
-// 		console.log("new = " + this.value);
-// 		console.log("selected = " + selected);
-// 		$( ".map" ).empty();
-// 		$( ".starBar" ).empty();
-// 		drawMarkerSelect(allData);
-// 	}).get();
-
-function resetCharts() {
-		marker.filterAll();
-		starBar.filterAll();
-		priceBar.filterAll();
-		categoriesBar.filterAll();
-
-		dc.redrawAll(groupname);
-}
-
-
-d3.csv("italian_indian.csv", function(data) {
-		allData = data;
-    drawMarkerSelect(allData);
-});
-
-function drawMarkerSelect(data) {
-    xf = crossfilter(data);
-
-// Prices bar graph
-		priceDimension = xf.dimension(function(d) {
-				return d.price_range;
-		});
-
-		var priceGroup = priceDimension.group().reduceCount();
-
-		priceBar = dc.barChart("#demo1 .priceBar",groupname)
-			          .dimension(priceDimension)
-			          .group(priceGroup)
-			          .width(300) //was 200
-			          .height(200)
-			          .renderLabel(false) //was true
-								.x(d3.scale.ordinal())
-	          			.xUnits(dc.units.ordinal)
-								.brushOn(true)
-								.on('renderlet.barclicker', function(chart, filter){
-    								chart.selectAll('rect.bar').on('click.custom', function(d) {
-        						console.log(d);
-    								});
-								})
-								.ordinalColors(['#28c619']);
-
-		priceBar.xAxis().tickFormat(function (v) {
-									var resultStr = '';
-									for(i=0; i<v; i++){
-										resultStr +='$';
-									}
-									return resultStr;
-								});
-
-		priceBar.yAxis().ticks(4);
-
-
-// Map
-	restaurantNamesDimension  = xf.dimension(function(d) {
-			return d.name;
-	});
-
-  var restaurantsGroup = restaurantNamesDimension.group().reduce(
-			function(p, v) { // add
-					p.name = v.name;
-					p.price_range = v.price_range;
-					p.stars = v.stars;
-					p.latitude = v.latitude;
-					p.longitude = v.longitude;
-	        ++p.count;
-	        return p;
-	    		},
-	    		function(p, v) { // remove
-	        	--p.count;
-	        	return p;
-	    		},
-	    		function() { // init
-	        	return {count: 0};
-	    		}
-			);
-
-		marker = dc_leaflet.markerChart("#demo1 .map", groupname) //map formatting
-          .dimension(restaurantNamesDimension)
-          .group(restaurantsGroup)
-          .width(700) //was 600
-          .height(500)
-          .center([43.733372, -79.354782]) //was 42.69,25.42
-          .zoom(11) //was 7s
-          .cluster(true) //was true
-					.valueAccessor(function(kv) {
-			         return kv.value.count;
-			    })
-			    .locationAccessor(function(kv) {
-						return [kv.value.latitude,kv.value.longitude]	;
-			    })
-          .popup(function(kv,marker) {
-              return kv.value.name + " - " + kv.value.stars + " * - "  + kv.value.price_range + "$";
-          });
-
-
-
-// Stars bar graph
-		starsDimension = xf.dimension(function(d) {
-							return d.stars;
-						});
-		var starsGroup = starsDimension.group().reduceCount();
-
-		starBar = dc.barChart("#demo1 .starBar",groupname)
-		          .dimension(starsDimension)
-		          .group(starsGroup)
-		          .width(300) //was 200
-		          .height(200)
-		          .renderLabel(false) //was true
-		          //.renderTitle(true) //was true
-							.x(d3.scale.ordinal())
-          .xUnits(dc.units.ordinal)
-				//	.barPadding(0.02)
-        //  .outerPadding(0.01)
-					 // .elasticY(true)
-							// .x(d3.scale.linear().domain([1,5]))
-							//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
-		          // .ordering(function (p) {
-		          //     return -p.value; //was -p.value
-		          // })
-							.brushOn(true)
-							.on('renderlet.barclicker', function(chart, filter){
-									chart.selectAll('rect.bar').on('click.custom', function(d) {
-									console.log(d);
-									});
-							})
-							.ordinalColors(['#fce91e']);
-
-			starBar.yAxis().ticks(4);
-
-
-// Categories bar graph
-		categoriesDimension = xf.dimension(function(d) {
-												return d.cuisine;
-											});
-	 	var categoriesGroup = categoriesDimension.group().reduceCount();
-
-		categoriesBar = dc.rowChart("#demo1 .categoriesBar",groupname)
-												.dimension(categoriesDimension)
-												.group(categoriesGroup)
-												.width(300) //was 200
-												.height(200)
-												.renderLabel(true) //was true
-												//.renderTitle(true) //was true
-												//.x(d3.scale.ordinal())
-												//		.xUnits(dc.units.ordinal)
-												//		.elasticX(true)
-									//	.barPadding(0.02)
-									//  .outerPadding(0.01)
-										 // .elasticY(true)
-												//.x(d3.scale.linear().domain([1,5]))
-												//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
-												// .ordering(function (p) {
-												//     return -p.value; //was -p.value
-												// })
-												//.brushOn(true)
-												/*.on('renderlet.barclicker', function(chart, filter){
-				    								chart.selectAll('rect.bar').on('click.custom', function(d) {
-				        						console.log(d);
-				    								});
-												})*/;
-
-			categoriesBar.xAxis().ticks(4);
-
-
-      dc.renderAll(groupname);
-      return {marker: marker, priceBar:priceBar, starBar: starBar};
-}
-
-
-
-/*
-	function redrawMarkerSelect() {
-		/*console.log("before", xf.size());
-		xf.remove();
-		console.log("after remove", xf.size());
-		xf.add(allData);
-		console.log("after add", xf.size());*/
-/*
-
-		priceDimension.filterAll()
-		.filter(function (d) {
-				if (selected.length == 0){
-					console.log("nothing selected");
-					return d;
-				} else {
-
-					if(selected.indexOf(d)>-1){
-						console.log("selected - " + d);
-						return d;
-					}
-				}
-			});
-
-		dc.redrawAll(groupname);
-}
-*/
-
-</script>
 
 </body>
 </html>
