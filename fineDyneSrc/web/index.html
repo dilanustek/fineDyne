@@ -152,6 +152,15 @@ function drawMarkerSelect(data) {
     								chart.selectAll('rect.bar').on('click.custom', function(d) {
         						console.log(d);
     								});
+								})
+								.ordinalColors(['#28c619']);
+
+		priceBar.xAxis().tickFormat(function (v) {
+									var resultStr = '';
+									for(i=0; i<v; i++){
+										resultStr +='$';
+									}
+									return resultStr;
 								});
 
 // Map
@@ -226,7 +235,8 @@ function drawMarkerSelect(data) {
 									chart.selectAll('rect.bar').on('click.custom', function(d) {
 									console.log(d);
 									});
-							});
+							})
+							.ordinalColors(['#fce91e']);
 
 
 // Categories bar graph
