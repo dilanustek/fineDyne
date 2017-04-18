@@ -189,8 +189,7 @@ function drawMarkerSelect(data) {
 
         datatable = dc.dataTable(".container .table", groupname)
                         .dimension(restaurantNamesDimension)
-                        .group(function(d) { return "";})
-                        // dynamic columns creation using an array of closures
+                        .group(function(d) { return "";})  //TODO: get rid of this somehow.
                         .columns([
                           'name',
                           'stars',
@@ -201,5 +200,4 @@ function drawMarkerSelect(data) {
 
 
       dc.renderAll(groupname);
-      return {marker: marker, priceBar:priceBar, starBar: starBar};
 }
