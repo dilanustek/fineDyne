@@ -187,15 +187,15 @@ function drawMarkerSelect(data) {
       //         }
       //     );
 
-        datatable = dc.dataTable(".container .dataTable", groupname)
+        datatable = dc.dataTable(".container .table", groupname)
                         .dimension(restaurantNamesDimension)
                         .group(function(d) { return "List of restaurants"})
                         // dynamic columns creation using an array of closures
                         .columns([
-                          function(d) {console.log(d); return d.name;  },
-                          function(d) { return d.stars;  },
-                          function(d) { return d.price_range;  },
-                          function(d) { return d.neighborhood;  },
+                          'name',
+                          'stars',
+                          'price_range',
+                          'neighborhood'
                         ])
                         .size(20);
 
