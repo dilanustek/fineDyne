@@ -189,7 +189,7 @@ function drawMarkerSelect(data) {
 
         datatable = dc.dataTable(".container .table", groupname)
                         .dimension(restaurantNamesDimension)
-                        .group(function(d) { return "List of restaurants"})
+                        .group(function(d) { return "";})
                         // dynamic columns creation using an array of closures
                         .columns([
                           'name',

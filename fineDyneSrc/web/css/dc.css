@@ -101,8 +101,7 @@ div.dc-chart {
     fill-opacity: 0.6; }
 
 .dc-chart g.row text {
-  fill: #fff;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer; }
 
 .dc-chart g.dc-tooltip path {
