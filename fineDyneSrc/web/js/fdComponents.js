@@ -13,6 +13,8 @@ var starBar;
 var categoriesBar;
 var dataTable;
 
+var pinned = [];
+
 
 function resetCharts() {
 		marker.filterAll();
@@ -23,6 +25,10 @@ function resetCharts() {
 		dc.redrawAll(groupname);
 }
 
+function pinRestaurant(d) {
+  pinned.push(d);
+  console.log(pinned);
+}
 
 d3.csv("italian_indian.csv", function(data) {
 		allData = data;
@@ -106,7 +112,17 @@ function drawMarkerSelect(data) {
 						return [kv.value.latitude,kv.value.longitude]	;
 			    })
           .popup(function(kv,marker) {
-              return kv.value.name + " - " + kv.value.stars + " * - "  + kv.value.price_range + "$";
+              var returnStr;
+
+              returnStr = kv.value.name + " <br>" + kv.value.stars + " * <br> ";
+
+              for(i=0; i<kv.value.price_range ; i++){
+                returnStr +='$';
+              }
+
+              returnStr +="<br>"
+              returnStr += "<button type=\"btn\" onclick=\"pinRestaurant("+ kv.value + ")\">Pin</button>" // TODO ???
+              return returnStr;
           });
 
 
@@ -132,9 +148,11 @@ function drawMarkerSelect(data) {
 									});
 							})
 							.ordinalColors(['#fce91e'])
-              .yAxisLabel("# of restaurants");
+              .yAxisLabel("# of restaurants", 30);
 
 			starBar.yAxis().ticks(4);
+
+      console.log(starBar);
 
 
 // Categories bar graph
@@ -170,31 +188,33 @@ function drawMarkerSelect(data) {
 			categoriesBar.xAxis().ticks(4);
 
 // Data table
-      // var tableGroup = restaurantNamesDimension.group().reduce(
-      //     function(p, v) { // add
-      //         p.name = v.name;
-      //         p.price_range = v.price_range;
-      //         p.stars = v.stars;
-      //         p.latitude = v.latitude;
-      //         p.longitude = v.longitude;
-      //         return p;
-      //         },
-      //         function(p, v) { // remove
-      //           return p;
-      //         },
-      //         function() { // init
-      //           return;
-      //         }
-      //     );
-
         datatable = dc.dataTable(".container .table", groupname)
                         .dimension(restaurantNamesDimension)
                         .group(function(d) { return "";})  //TODO: get rid of this somehow.
                         .columns([
-                          'name',
-                          'stars',
-                          'price_range',
-                          'neighborhood'
+                          {
+                              label: "Name",
+                              format: function(d){return d.name}
+                          },
+                          {
+                              label: "Quality",
+                              format: function (d) {
+                                var returnStr = "";
+                                for(i=0; i<d.stars ; i++){
+                                  returnStr +='$';
+                                }
+                                return returnStr;
+                                }
+                          }
+                          ,
+                          {
+                              label: "Price Range",
+                              format: function(d){return d.price_range}
+                          },
+                          {
+                              label: "Neighborhood",
+                              format: function(d){return d.neighborhood}
+                          }
                         ])
                         .size(20);
 
