@@ -100,7 +100,7 @@ function drawMarkerSelect(data) {
 		marker = dc_leaflet.markerChart(".container .inRowOppositeSides .map", groupname) //map formatting
           .dimension(restaurantNamesDimension)
           .group(restaurantsGroup)
-          .width(700) //was 600
+          .width(600) //was 600
           .height(500)
           .center([43.733372, -79.354782]) //was 42.69,25.42
           .zoom(11) //was 7s
@@ -198,18 +198,19 @@ function drawMarkerSelect(data) {
                           },
                           {
                               label: "Quality",
-                              format: function (d) {
-                                var returnStr = "";
-                                for(i=0; i<d.stars ; i++){
-                                  returnStr +='$';
-                                }
-                                return returnStr;
-                                }
+                              format: function (d) { return d.stars}
+
                           }
                           ,
                           {
                               label: "Price Range",
-                              format: function(d){return d.price_range}
+                              format: function (d) {
+                                  var returnStr = "";
+                                  for(i=0; i<d.price_range ; i++){
+                                    returnStr +='$';
+                                  }
+                                  return returnStr;
+                                }
                           },
                           {
                               label: "Neighborhood",
