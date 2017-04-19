@@ -13,9 +13,22 @@ var starBar;
 var categoriesBar;
 var dataTable;
 
-var pinned = [];
+var pinned = {};
 
 var map;
+var restaurantsGroup;
+
+var randomImageArray = [
+"https://i.ytimg.com/vi/NCO36DCleZ8/hqdefault.jpg",
+"http://i.telegraph.co.uk/multimedia/archive/02999/restaurant_2999753b.jpg",
+"https://images.pexels.com/photos/2232/vegetables-italian-pizza-restaurant.jpg?h=350&auto=compress&cs=tinysrgb",
+"http://willtravelforfood.com/wp-content/uploads/2016/10/atma-indian-restaurant-montreal.jpg",
+"https://media-cdn.tripadvisor.com/media/photo-s/0a/81/96/03/steak-and-lobster.jpg",
+"http://img.aws.livestrongcdn.com/ls-slideshow-main-image/ds-photo/getty/article/94/18/637233918.jpg",
+"http://s3.amazonaws.com/btoimage/prism-thumbnails/articles/bestofrankedlistings/hong-shing-chinese-restaurant-toronto-2e76110d.jpg-resize_then_crop-_frame_bg_color_FFF-h_480-gravity_center-q_70-preserve_ratio_true-w_720_.jpg",
+"http://www.avenuecalgary.com/images/cache/cache_e/cache_1/cache_b/BEST_Restaurant_pics9-92b13b1e.jpeg?ver=1488381227&aspectratio=1.6666666666667",
+"http://www.palkirestaurant.com/wp-content/uploads/2012/06/6kb80VApHMcQij-640m.jpg"
+];
 
 function resetCharts() {
 		marker.filterAll();
@@ -26,9 +39,43 @@ function resetCharts() {
 		dc.redrawAll(groupname);
 }
 
-function pinRestaurant(d) {
-  pinned.push(d);
-  console.log(pinned);
+function pinRestaurant(business_id, name, price_range, stars, cuisine) {
+	// put in set of pinned elements
+	if (pinned[business_id] == true)
+		return;
+	else {
+		pinned[business_id] = true;
+
+		// show in pinned list
+		/*var pinnedItems = document.getElementById("pinnedItems");
+
+		var item = document.createElement("div");
+		item.createNode
+
+		pinnedItems.appendChild(item);*/
+
+		var dollarSigns = "";
+		for(i=0; i<price_range; i++){
+			dollarSigns +='$';
+		}
+
+		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
+
+		$("#pinnedItems").prepend(
+			"<div class=\"inRow\" id=\" " + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3\">"
+			+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
+			+ "<div class=\"inColumn\""
+			+ "<p><b>" + name + "</b></p>"
+			+ "<p>" + stars + " * "
+			+ dollarSigns + "  "
+			+ cuisine + "</p>"
+			+ "</div></div>"
+		);
+
+
+
+	}
+	console.log(pinned);
 }
 
 d3.csv("italian_indian.csv", function(data) {
@@ -57,7 +104,6 @@ function drawMarkerSelect(data) {
 								.brushOn(true)
 								.on('renderlet.barclicker', function(chart, filter){
     								chart.selectAll('rect.bar').on('click.custom', function(d) {
-        						console.log(d);
     								});
 								})
 								.ordinalColors(['#28c619'])
@@ -79,13 +125,15 @@ function drawMarkerSelect(data) {
 			return d.name;
 	});
 
-  var restaurantsGroup = restaurantNamesDimension.group().reduce(
+  restaurantsGroup = restaurantNamesDimension.group().reduce(
 			function(p, v) { // add
 					p.name = v.name;
 					p.price_range = v.price_range;
 					p.stars = v.stars;
 					p.latitude = v.latitude;
 					p.longitude = v.longitude;
+					p.business_id = v.business_id;
+					p.cuisine = v.cuisine;
 	        ++p.count;
 	        return p;
 	    		},
@@ -122,12 +170,26 @@ function drawMarkerSelect(data) {
                 returnStr +='$';
               }
 
+							returnStr += " <br>" +  kv.value.cuisine + " <br>";
+
               returnStr +="<br>"
-              returnStr += "<button type=\"btn\" onclick=\"pinRestaurant("+ kv.value + ")\">Pin</button>" // TODO ???
+              returnStr += "<button type=\"btn\" onclick=\"pinRestaurant(\'"
+												+ kv.value.business_id + "\',\'" + kv.value.name + "\',"
+												+ kv.value.price_range + "," + kv.value.stars + ",\'"
+												+ kv.value.cuisine + "\')\">Pin</button>" // TODO ???
               return returnStr;
           });
 
-        //   map = marker.map();
+
+          setTimeout(function(){
+            map = marker.map();
+
+            var group = new L.featureGroup(restaurantsGroup);
+            var bounds = group.getBounds();
+          //   map.fitBounds(bounds);
+            // var bounds = L.latLngBounds(restaurantsGroup);
+            // map.fitBounds(bounds);
+          }, 500);
           //var group = new L.featureGroup([marker1, marker2, marker3]);
            //map.fitBounds(group.getBounds());
           // var bounds = L.latLngBounds(restaurantsGroup);
@@ -151,7 +213,6 @@ function drawMarkerSelect(data) {
 							.brushOn(true)
 							.on('renderlet.barclicker', function(chart, filter){
 									chart.selectAll('rect.bar').on('click.custom', function(d) {
-									console.log(d);
 									});
 							})
 							.ordinalColors(['#fce91e'])
@@ -186,7 +247,6 @@ function drawMarkerSelect(data) {
 												//.brushOn(true)
 												/*.on('renderlet.barclicker', function(chart, filter){
 				    								chart.selectAll('rect.bar').on('click.custom', function(d) {
-				        						console.log(d);
 				    								});
 												})*/;
 
@@ -218,8 +278,8 @@ function drawMarkerSelect(data) {
                                 }
                           },
                           {
-                              label: "Neighborhood",
-                              format: function(d){return d.neighborhood}
+                              label: "Cuisine",
+                              format: function(d){return d.cuisine}
                           }
                         ])
                         .size(20);
