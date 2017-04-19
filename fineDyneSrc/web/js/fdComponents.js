@@ -15,6 +15,7 @@ var dataTable;
 
 var pinned = [];
 
+var map;
 
 function resetCharts() {
 		marker.filterAll();
@@ -60,7 +61,7 @@ function drawMarkerSelect(data) {
     								});
 								})
 								.ordinalColors(['#28c619'])
-                 .yAxisLabel("# of restaurants");
+                .yAxisLabel("# of restaurants");
 
 		priceBar.xAxis().tickFormat(function (v) {
 									var resultStr = '';
@@ -97,20 +98,21 @@ function drawMarkerSelect(data) {
 	    		}
 			);
 
-		marker = dc_leaflet.markerChart(".container .inRowOppositeSides .map", groupname) //map formatting
+		marker = dc_leaflet.markerChart(".container .inRowOppositeSides .map", groupname)
           .dimension(restaurantNamesDimension)
           .group(restaurantsGroup)
-          .width(600) //was 600
+          .width(600)
           .height(500)
-          .center([43.733372, -79.354782]) //was 42.69,25.42
-          .zoom(11) //was 7s
-          .cluster(true) //was true
+          .center([43.733372, -79.354782])
+          .zoom(11)
+          .cluster(true)
 					.valueAccessor(function(kv) {
 			         return kv.value.count;
 			    })
 			    .locationAccessor(function(kv) {
 						return [kv.value.latitude,kv.value.longitude]	;
 			    })
+          .filterByArea(true)
           .popup(function(kv,marker) {
               var returnStr;
 
@@ -125,6 +127,11 @@ function drawMarkerSelect(data) {
               return returnStr;
           });
 
+        //   map = marker.map();
+          //var group = new L.featureGroup([marker1, marker2, marker3]);
+           //map.fitBounds(group.getBounds());
+          // var bounds = L.latLngBounds(restaurantsGroup);
+          // map.fitBounds(bounds);
 
 
 // Stars bar graph
@@ -151,8 +158,6 @@ function drawMarkerSelect(data) {
               .yAxisLabel("# of restaurants", 30);
 
 			starBar.yAxis().ticks(4);
-
-      console.log(starBar);
 
 
 // Categories bar graph
