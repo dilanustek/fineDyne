@@ -13,7 +13,7 @@ var starBar;
 var categoriesBar;
 var dataTable;
 
-var pinned = {};
+var pinned = [];
 
 var map;
 var restaurantsGroup;
@@ -40,35 +40,36 @@ function resetCharts() {
 }
 
 function pinRestaurant(business_id, name, price_range, stars, cuisine) {
-	// put in set of pinned elements
-	if (pinned[business_id] == true)
-		return;
-	else {
-		pinned[business_id] = true;
 
-		// show in pinned list
+		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
+
 		var dollarSigns = "";
 		for(i=0; i<price_range; i++){
 			dollarSigns +='$';
 		}
 
-		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
+		var itemHtml = "<div class=\"inRow\" id=\" " + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3\">"
+					+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
+					+ "<div class=\"inColumn\""
+					+ "<p><b>" + name + "</b></p>"
+					+ "<p>" + stars + " * "
+					+ dollarSigns + "  "
+					+ cuisine + "</p>"
+					+ "</div>"
+					+ "<div style=\"margin-left:330px;\"  onmouseover=\"this.style.background='#decdcd';\" onmouseout=\"this.style.background='white';\"  \"> <img src=\"close.svg\" >" + "</div>"
+					+ "</div>";
 
-		$("#pinnedItems").prepend(
-			"<div class=\"inRow\" id=\" " + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3\">"
-			+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
-			+ "<div class=\"inColumn\""
-			+ "<p><b>" + name + "</b></p>"
-			+ "<p>" + stars + " * "
-			+ dollarSigns + "  "
-			+ cuisine + "</p>"
-			+ "</div></div>"
-		);
+		// there was nothing before so replace old html
+		if (Object.keys(pinned).length == 0) {
+			$("#pinnedItems").html( itemHtml );
+		} else { // add to the top of the pinned list
+			$("#pinnedItems").prepend( itemHtml );
+		}
 
+		// put in set of pinned elements so you don't pin it again
+		if (pinned[business_id] == true) return;
+		else pinned[business_id] = true;
 
-
-	}
-	console.log(pinned);
 }
 
 d3.csv("italian_indian.csv", function(data) {
