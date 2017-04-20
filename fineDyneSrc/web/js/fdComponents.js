@@ -39,7 +39,7 @@ function resetCharts() {
 		dc.redrawAll(groupname);
 }
 
-function pinRestaurant(business_id, name, price_range, stars, cuisine) {
+function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 
 		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
 
@@ -48,7 +48,7 @@ function pinRestaurant(business_id, name, price_range, stars, cuisine) {
 			dollarSigns +='$';
 		}
 
-		var itemHtml = "<div class=\"inRow\" id=\" " + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3\">"
+		var itemHtml = "<div class=\"inRow\" id=\"" + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3\">"
 					+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
 					+ "<div class=\"inColumn\""
 					+ "<p><b>" + name + "</b></p>"
@@ -56,7 +56,8 @@ function pinRestaurant(business_id, name, price_range, stars, cuisine) {
 					+ dollarSigns + "  "
 					+ cuisine + "</p>"
 					+ "</div>"
-					+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" onmouseout=\"this.style.background='white';\"  \"> <img src=\"close.svg\" >" + "</div>"
+					+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" "
+					+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"close.svg\" >" + "</div>"
 					+ "</div>";
 
 		// there was nothing before so replace old html
@@ -71,6 +72,13 @@ function pinRestaurant(business_id, name, price_range, stars, cuisine) {
 		else pinned[business_id] = true;
 
 }
+
+function unpinRestaurant (business_id) {
+	//$("#pinnedItems").remove("#" + business_id );
+	$("#" + business_id).remove();
+	delete pinned[business_id];
+}
+
 
 d3.csv("italian_indian.csv", function(data) {
 		allData = data;
@@ -280,4 +288,9 @@ function drawMarkerSelect(data) {
 
 
       dc.renderAll(groupname);
+
+			$(".dc-table-row").hover(function(e){
+				$(this).css("background-color", e.type === "mouseenter"?"#e2e2e2":"transparent");
+			});
+
 }
