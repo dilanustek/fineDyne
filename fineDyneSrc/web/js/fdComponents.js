@@ -47,13 +47,6 @@ function pinRestaurant(business_id, name, price_range, stars, cuisine) {
 		pinned[business_id] = true;
 
 		// show in pinned list
-		/*var pinnedItems = document.getElementById("pinnedItems");
-
-		var item = document.createElement("div");
-		item.createNode
-
-		pinnedItems.appendChild(item);*/
-
 		var dollarSigns = "";
 		for(i=0; i<price_range; i++){
 			dollarSigns +='$';
