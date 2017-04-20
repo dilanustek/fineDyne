@@ -56,7 +56,7 @@ function pinRestaurant(business_id, name, price_range, stars, cuisine) {
 					+ dollarSigns + "  "
 					+ cuisine + "</p>"
 					+ "</div>"
-					+ "<div style=\"margin-left:330px;\"  onmouseover=\"this.style.background='#decdcd';\" onmouseout=\"this.style.background='white';\"  \"> <img src=\"close.svg\" >" + "</div>"
+					+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" onmouseout=\"this.style.background='white';\"  \"> <img src=\"close.svg\" >" + "</div>"
 					+ "</div>";
 
 		// there was nothing before so replace old html
