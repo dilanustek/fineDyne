@@ -30,6 +30,10 @@ var randomImageArray = [
 "http://www.palkirestaurant.com/wp-content/uploads/2012/06/6kb80VApHMcQij-640m.jpg"
 ];
 
+function changeBackground (obj) {
+	//obj.background-color="red";
+}
+
 function resetCharts() {
 		marker.filterAll();
 		starBar.filterAll();
@@ -178,7 +182,7 @@ function drawMarkerSelect(data) {
               returnStr += "<button type=\"btn\" onclick=\"pinRestaurant(\'"
 												+ kv.value.business_id + "\',\'" + kv.value.name + "\',"
 												+ kv.value.price_range + "," + kv.value.stars + ",\'"
-												+ kv.value.cuisine + "\')\">Pin</button>" // TODO ???
+												+ kv.value.cuisine + "\')\" >Pin</button>"
               return returnStr;
           });
 
@@ -261,7 +265,12 @@ function drawMarkerSelect(data) {
                         .columns([
                           {
                               label: "Name",
-                              format: function(d){return d.name}
+                              format: function(d){
+																return " <img src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
+																					+ d.business_id + "\',\'" + d.name + "\',"
+																					+ d.price_range + "," + d.stars + ",\'"
+																					+ d.cuisine + "\'); \"  > "
+																+ d.name }
                           },
                           {
                               label: "Quality",
