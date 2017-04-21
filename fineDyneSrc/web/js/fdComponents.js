@@ -259,7 +259,7 @@ function drawMarkerSelect(data) {
 												.height(400)
 												.renderLabel(true)
 												.elasticX(true);
-												
+
 			categoriesBar.xAxis().ticks(4);
 
 
@@ -268,16 +268,19 @@ function drawMarkerSelect(data) {
                         .dimension(restaurantNamesDimension)
                         .group(function(d) { return "";})  //TODO: get rid of this somehow.
                         .columns([
+													{
+														label: "Pinned",
+														format: function(d){
+															return " <img class=\"pin\" src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
+																				+ d.business_id + "\',\'" + d.name + "\',"
+																				+ d.price_range + "," + d.stars + ",\'"
+																				+ d.cuisine + "\'); \"  > "
+								 								}
+													},
                           {
                               label: "Name",
                               format: function(d){
-
-
-																return " <img class=\"pin\" src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
-																					+ d.business_id + "\',\'" + d.name + "\',"
-																					+ d.price_range + "," + d.stars + ",\'"
-																					+ d.cuisine + "\'); \"  > "
-																+ d.name }
+																return d.name }
                           },
                           {
                               label: "Quality",
@@ -307,6 +310,15 @@ function drawMarkerSelect(data) {
 
 			$(".dc-table-row").click(function(e){
 				$(this).find('.pin')[0].onclick();
+				$(this).find('.pin').toggle();
 			});
+
+
+		/*	$(".dc-table-row").hover(function() {
+        $(this).find('.pin').show();
+    }, function() {
+        $(this).find('.pin').hide();
+    });*/
+
 
 }
