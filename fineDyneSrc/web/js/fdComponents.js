@@ -47,6 +47,10 @@ function resetCharts() {
 }
 
 function pinRestaurant (business_id, name, price_range, stars, cuisine) {
+		// put in set of pinned elements so you don't pin it again
+		if (pinned[business_id] == true) return;
+		else pinned[business_id] = true;
+		console.log(pinned)
 
 		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
 
@@ -55,7 +59,7 @@ function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 			dollarSigns +='$';
 		}
 
-		var itemHtml = "<div class=\"inRow\" id=\"" + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3\">"
+		var itemHtml = "<div class=\"inRow\" id=\"" + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3; margin-bottom:8px;\">"
 					+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
 					+ "<div class=\"inColumn\""
 					+ "<p><b>" + name + "</b></p>"
@@ -68,15 +72,11 @@ function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 					+ "</div>";
 
 		// there was nothing before so replace old html
-		if (Object.keys(pinned).length == 0) {
+		if (Object.keys(pinned).length == 1) {
 			$("#pinnedItems").html( itemHtml );
 		} else { // add to the top of the pinned list
 			$("#pinnedItems").prepend( itemHtml );
 		}
-
-		// put in set of pinned elements so you don't pin it again
-		if (pinned[business_id] == true) return;
-		else pinned[business_id] = true;
 
 }
 
@@ -84,6 +84,12 @@ function unpinRestaurant (business_id) {
 	//$("#pinnedItems").remove("#" + business_id );
 	$("#" + business_id).remove();
 	delete pinned[business_id];
+	console.log(pinned);
+
+	if (Object.keys(pinned).length == 0) {
+		$("#pinnedItems").html( "	<p> Pin items on the map and from the list on the right to keep track of them here!</p>" );
+	}
+
 }
 
 
