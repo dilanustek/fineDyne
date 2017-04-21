@@ -68,7 +68,7 @@ function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 					+ cuisine + "</p>"
 					+ "</div>"
 					+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" "
-					+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"close.svg\" >" + "</div>"
+					+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"images\\close.svg\" >" + "</div>"
 					+ "</div>";
 
 		// there was nothing before so replace old html
@@ -93,7 +93,7 @@ function unpinRestaurant (business_id) {
 }
 
 
-d3.csv("april_20_so_far.csv", function(data) {
+d3.csv("data\\april_20_so_far.csv", function(data) {
 		allData = data;
     drawMarkerSelect(allData);
 });
@@ -272,7 +272,7 @@ function drawMarkerSelect(data) {
 													{
 														label: "Pinned",
 														format: function(d){
-															return " <img class=\"pin\" src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
+															return " <img class=\"pin\" src=\"images\\pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
 																				+ d.business_id + "\',\'" + d.name + "\',"
 																				+ d.price_range + "," + d.stars + ",\'"
 																				+ d.cuisine + "\'); \"  > "
