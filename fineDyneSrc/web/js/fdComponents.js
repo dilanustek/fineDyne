@@ -264,6 +264,7 @@ function drawMarkerSelect(data) {
 
 
 // Data table
+
         datatable = dc.dataTable(".container .table", groupname)
                         .dimension(restaurantNamesDimension)
                         .group(function(d) { return "";})  //TODO: get rid of this somehow.
@@ -308,17 +309,69 @@ function drawMarkerSelect(data) {
 
       dc.renderAll(groupname);
 
-			$(".dc-table-row").click(function(e){
-				$(this).find('.pin')[0].onclick();
-				$(this).find('.pin').toggle();
-			});
 
 
-		/*	$(".dc-table-row").hover(function() {
-        $(this).find('.pin').show();
-    }, function() {
-        $(this).find('.pin').hide();
-    });*/
+/*
+			var dataDim = xf.dimension(function(d) {return d.name;});
+			datatable = dc.dataTable(".container .table", groupname)
+												 .dimension(dataDim)
+												 .group(function(d) { return "";})  //TODO: get rid of this somehow.
+												 .columns([
+													 {
+														 function(d){
+															 return " <img class=\"pin\" src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
+																				 + d.business_id + "\',\'" + d.name + "\',"
+																				 + d.price_range + "," + d.stars + ",\'"
+																				 + d.cuisine + "\'); \"  > "
+																 }
+													 },
+													 {
+															 function(d){
+																 return d.name }
+													 },
+													 {
+															 function (d) { return d.stars}
+
+													 }
+													 ,
+													 {
+															 function (d) {
+																	 var returnStr = "";
+																	 for(i=0; i<d.price_range ; i++){
+																		 returnStr +='$';
+																	 }
+																	 return returnStr;
+																 }
+													 },
+													 {
+															 function(d){return d.cuisine}
+													 }
+												 ])
+												 .size(20);
+
+												 $('#data-table').on('click', '.data-table-col', function() {
+												   var column = $(this).attr("data-col");
+												   dataDim.dispose();
+												   dataDim = xf.dimension(function(d) {return d[column];});
+												   dataTable.dimension(dataDim)
+												   dataTable.sortBy(function(d) {
+												     return d[column];
+												   });
+												   dataTable.redraw();
+												 });
+
+*/
 
 
+		$(".dc-table-row").click(function(e){
+					$(this).find('.pin')[0].onclick();
+					$(this).find('.pin').toggle();
+		});
+
+
+	/*	$(".dc-table-row").hover(function() {
+			    $(this).find('.pin').show();
+		}, function() {
+			    $(this).find('.pin').hide();
+		});*/
 }
