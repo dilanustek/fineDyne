@@ -1,0 +1,63 @@
+.title {
+  margin-bottom: 25px;
+}
+
+.map {
+  margin-right: 50px;
+}
+.starBar {
+  margin-right:30px;
+}
+
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: center;
+  justify-content: center;
+  width: 1380px;
+}
+
+.inColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: center;
+}
+
+.inRow {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.inRowOppositeSides {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  margin-left: 100px;
+}
+
+.controlButtons {
+  font-size: 14px;
+}
+
+.pinnedList {
+  margin-top: 20px;
+}
+
+.pin{
+  display: none;
+}
+
+/*.dc-table-row:hover .pin{
+  visibility: visible;
+}*/
+
+.dc-table-row:hover{
+  background-color: #e2e2e2;
+}
