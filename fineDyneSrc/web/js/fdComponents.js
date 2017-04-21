@@ -30,10 +30,13 @@ var randomImageArray = [
 "http://www.palkirestaurant.com/wp-content/uploads/2012/06/6kb80VApHMcQij-640m.jpg"
 ];
 
-function changeBackground (obj) {
-	//obj.background-color="red";
-}
 
+function zoomCluster(zoom){
+		if (zoom < 18)
+			return 40;
+		else if (zoom < 25)
+			return 0;
+}
 function resetCharts() {
 		marker.filterAll();
 		starBar.filterAll();
@@ -84,7 +87,7 @@ function unpinRestaurant (business_id) {
 }
 
 
-d3.csv("italian_indian.csv", function(data) {
+d3.csv("april_20_so_far.csv", function(data) {
 		allData = data;
     drawMarkerSelect(allData);
 });
@@ -160,6 +163,13 @@ function drawMarkerSelect(data) {
           .center([43.733372, -79.354782])
           .zoom(11)
           .cluster(true)
+					.clusterOptions({
+						disableClusteringAtZoom: 15,
+						spiderfyOnMaxZoom: false
+					})
+					.mapOptions({
+						riseOnHover: true
+					})
 					.valueAccessor(function(kv) {
 			         return kv.value.count;
 			    })
@@ -237,7 +247,7 @@ function drawMarkerSelect(data) {
 												.dimension(categoriesDimension)
 												.group(categoriesGroup)
 												.width(300)
-												.height(200)
+												.height(400)
 												.renderLabel(true)
 												//.x(d3.scale.ordinal())
 												//		.xUnits(dc.units.ordinal)
@@ -266,7 +276,9 @@ function drawMarkerSelect(data) {
                           {
                               label: "Name",
                               format: function(d){
-																return " <img src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
+
+
+																return " <img class=\"pin\" src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
 																					+ d.business_id + "\',\'" + d.name + "\',"
 																					+ d.price_range + "," + d.stars + ",\'"
 																					+ d.cuisine + "\'); \"  > "
@@ -298,8 +310,8 @@ function drawMarkerSelect(data) {
 
       dc.renderAll(groupname);
 
-			$(".dc-table-row").hover(function(e){
-				$(this).css("background-color", e.type === "mouseenter"?"#e2e2e2":"transparent");
+			$(".dc-table-row").click(function(e){
+				$(this).find('.pin')[0].onclick();
 			});
 
 }
