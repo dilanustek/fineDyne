@@ -122,7 +122,9 @@ function drawMarkerSelect(data) {
     								});
 								})
 								.ordinalColors(['#28c619'])
-                .yAxisLabel("# of restaurants");
+                .yAxisLabel("# of restaurants")
+								.elasticY(true);
+
 
 		priceBar.xAxis().tickFormat(function (v) {
 									var resultStr = '';
@@ -238,7 +240,8 @@ function drawMarkerSelect(data) {
 									});
 							})
 							.ordinalColors(['#fce91e'])
-              .yAxisLabel("# of restaurants", 30);
+              .yAxisLabel("# of restaurants", 30)
+							.elasticY(true);
 
 			starBar.yAxis().ticks(4);
 
