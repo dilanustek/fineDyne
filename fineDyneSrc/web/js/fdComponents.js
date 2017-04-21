@@ -258,24 +258,10 @@ function drawMarkerSelect(data) {
 												.width(300)
 												.height(400)
 												.renderLabel(true)
-												//.x(d3.scale.ordinal())
-												//		.xUnits(dc.units.ordinal)
-												//		.elasticX(true)
-									//	.barPadding(0.02)
-									//  .outerPadding(0.01)
-										 // .elasticY(true)
-												//.x(d3.scale.linear().domain([1,5]))
-												//.x(d3.scale.ordinal().rangeRoundBands([0, 400], 0.1))
-												// .ordering(function (p) {
-												//     return -p.value; //was -p.value
-												// })
-												//.brushOn(true)
-												/*.on('renderlet.barclicker', function(chart, filter){
-				    								chart.selectAll('rect.bar').on('click.custom', function(d) {
-				    								});
-												})*/;
-
+												.elasticX(true);
+												
 			categoriesBar.xAxis().ticks(4);
+
 
 // Data table
         datatable = dc.dataTable(".container .table", groupname)
