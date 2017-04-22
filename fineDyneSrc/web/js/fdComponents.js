@@ -121,13 +121,14 @@ function drawMarkerSelect(data) {
     								chart.selectAll('rect.bar').on('click.custom', function(d) {
     								});
 								})
-								.ordinalColors(['#28c619'])
+								.ordinalColors(['#4268f4'])
                 .yAxisLabel("# of restaurants")
 								.elasticY(true);
 
 
 		priceBar.xAxis().tickFormat(function (v) {
 									var resultStr = '';
+
 									for(i=0; i<v; i++){
 										resultStr +='$';
 									}
@@ -186,17 +187,38 @@ function drawMarkerSelect(data) {
 			    })
           .filterByArea(true)
           .popup(function(kv,marker) {
-              var returnStr;
+              var returnStr = "";
 
-              returnStr = kv.value.name + " <br>" + kv.value.stars + " * <br> ";
+							// Name
+              returnStr = "<b>" + kv.value.name + " </b> <br> <br>";
 
+							// Quality
+							for(i=1; i<kv.value.stars; i++){
+								returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+							}
+
+									//final star is full
+							if (kv.value.stars % 1 === 0) {
+								returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+							} else {
+								// final star is a half star
+								returnStr += "<img src=\" images\\redHalfStar.svg \" width='10px'>";
+							}
+
+							returnStr +="<br>";
+
+							// price range
               for(i=0; i<kv.value.price_range ; i++){
-                returnStr +='$';
+								returnStr += "<img src=\" images\\dollar.png \" width='10px'>";
               }
 
-							returnStr += " <br>" +  kv.value.cuisine + " <br>";
+							// cuisine
+							returnStr += " <br>" +  kv.value.cuisine ;
 
-              returnStr +="<br>"
+							// review
+							returnStr += "<p> Review: \"I was there once and it was lovely! Tasty food and great atmosphere!\"</p>"
+
+							// pin button
               returnStr += "<button type=\"btn\" onclick=\"pinRestaurant(\'"
 												+ kv.value.business_id + "\',\'" + kv.value.name + "\',"
 												+ kv.value.price_range + "," + kv.value.stars + ",\'"
@@ -239,7 +261,7 @@ function drawMarkerSelect(data) {
 									chart.selectAll('rect.bar').on('click.custom', function(d) {
 									});
 							})
-							.ordinalColors(['#fce91e'])
+							.ordinalColors(['#f20707'])
               .yAxisLabel("# of restaurants", 30)
 							.elasticY(true);
 
@@ -285,18 +307,40 @@ function drawMarkerSelect(data) {
                           },
                           {
                               label: "Quality",
-                              format: function (d) { return d.stars}
+                              format: function (d) {
+																	var returnStr = "";
+																	for(i=1; i<d.stars ; i++){
+																		returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+																	}
+
+																	//final star is full
+																	if (d.stars % 1 === 0) {
+																		returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+																		return returnStr;
+																	}
+
+																	// final star is a half star
+																	returnStr += "<img src=\" images\\redHalfStar.svg \" width='10px'>";
+																	return returnStr;
+															}
 
                           }
                           ,
                           {
                               label: "Price Range",
                               format: function (d) {
-                                  var returnStr = "";
+                                /*  var returnStr = "";
                                   for(i=0; i<d.price_range ; i++){
                                     returnStr +='$';
                                   }
-                                  return returnStr;
+                                  return returnStr;*/
+
+																	var returnStr = "";
+																		for(i=0; i<d.price_range ; i++){
+																			returnStr += "<img src=\" images\\dollar.png \" width='10px'>";
+																		}
+																		return returnStr;
+
                                 }
                           },
                           {
