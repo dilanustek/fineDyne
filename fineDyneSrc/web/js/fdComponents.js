@@ -54,18 +54,32 @@ function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 
 		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
 
+		var starsSvg = "";
+		for(i=1; i<stars; i++){
+			starsSvg += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+		}
+
+				//final star is full
+		if (stars % 1 === 0) {
+			starsSvg += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+		} else {
+			// final star is a half star
+			starsSvg += "<img src=\" images\\redHalfStar.svg \" width='10px'>";
+		}
+
+
 		var dollarSigns = "";
-		for(i=0; i<price_range; i++){
-			dollarSigns +='$';
+		// price range
+		for(i=0; i<price_range ; i++){
+			dollarSigns += "<img src=\" images\\dollar.png \" width='10px'>";
 		}
 
 		var itemHtml = "<div class=\"inRow\" id=\"" + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3; margin-bottom:8px;\">"
 					+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
 					+ "<div class=\"inColumn\""
 					+ "<p><b>" + name + "</b></p>"
-					+ "<p>" + stars + " * "
-					+ dollarSigns + "  "
-					+ cuisine + "</p>"
+					+ "<p>" + starsSvg + " " + dollarSigns + "  " + cuisine + "</p>"
+					+ "<p> <b>Review:</b> 'I was there once and it was lovely! Tasty food and great atmosphere!' </p>"
 					+ "</div>"
 					+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" "
 					+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"images\\close.svg\" >" + "</div>"
