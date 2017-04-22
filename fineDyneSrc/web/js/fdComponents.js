@@ -48,9 +48,12 @@ function resetCharts() {
 
 function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 		// put in set of pinned elements so you don't pin it again
-		if (pinned[business_id] == true) return;
+		if (pinned[business_id] == true) {
+			unpinRestaurant(business_id);
+			return;
+		}
 		else pinned[business_id] = true;
-		console.log(pinned)
+			console.log(pinned)
 
 		var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
 
@@ -122,7 +125,7 @@ function drawMarkerSelect(data) {
 
 		var priceGroup = priceDimension.group().reduceCount();
 
-		priceBar = dc.barChart(".container .priceBar",groupname)
+		priceBar = dc.barChart(".wrapper .priceBar",groupname)
 			          .dimension(priceDimension)
 			          .group(priceGroup)
 			          .width(300)
@@ -178,7 +181,7 @@ function drawMarkerSelect(data) {
 	    		}
 			);
 
-		marker = dc_leaflet.markerChart(".container .inRowOppositeSides .map", groupname)
+		marker = dc_leaflet.markerChart(".wrapper .inRowOppositeSides .map", groupname)
           .dimension(restaurantNamesDimension)
           .group(restaurantsGroup)
           .width(600)
@@ -232,24 +235,33 @@ function drawMarkerSelect(data) {
 							// review
 							returnStr += "<p> Review: \"I was there once and it was lovely! Tasty food and great atmosphere!\"</p>"
 
+
+
 							// pin button
               returnStr += "<button type=\"btn\" onclick=\"pinRestaurant(\'"
 												+ kv.value.business_id + "\',\'" + kv.value.name + "\',"
 												+ kv.value.price_range + "," + kv.value.stars + ",\'"
-												+ kv.value.cuisine + "\')\" >Pin</button>"
+												+ kv.value.cuisine + "\')\" > ";
+
+							if (pinned[kv.value.business_id] == true) {
+											returnStr += "Unpin</button>";
+							} else {
+											returnStr += "Pin</button>";
+							}
+
               return returnStr;
           });
 
 
-          setTimeout(function(){
-            map = marker.map();
+		setTimeout(function(){
+          map = marker.map();
 
-            var group = new L.featureGroup(restaurantsGroup);
-            var bounds = group.getBounds();
+          var group = new L.featureGroup(restaurantsGroup);
+          var bounds = group.getBounds();
           //   map.fitBounds(bounds);
             // var bounds = L.latLngBounds(restaurantsGroup);
             // map.fitBounds(bounds);
-          }, 500);
+		}, 500);
           //var group = new L.featureGroup([marker1, marker2, marker3]);
            //map.fitBounds(group.getBounds());
           // var bounds = L.latLngBounds(restaurantsGroup);
@@ -262,7 +274,7 @@ function drawMarkerSelect(data) {
 						});
 		var starsGroup = starsDimension.group().reduceCount();
 
-		starBar = dc.barChart(".container .starBar",groupname)
+		starBar = dc.barChart(".wrapper .starBar",groupname)
 		          .dimension(starsDimension)
 		          .group(starsGroup)
 		          .width(300)
@@ -288,7 +300,7 @@ function drawMarkerSelect(data) {
 											});
 	 	var categoriesGroup = categoriesDimension.group().reduceCount();
 
-		categoriesBar = dc.rowChart(".container .categoriesBar",groupname)
+		categoriesBar = dc.rowChart(".wrapper .categoriesBar",groupname)
 												.dimension(categoriesDimension)
 												.group(categoriesGroup)
 												.width(300)
@@ -301,13 +313,23 @@ function drawMarkerSelect(data) {
 
 // Data table
 
-        datatable = dc.dataTable(".container .table", groupname)
+        datatable = dc.dataTable(".wrapper .table", groupname)
                         .dimension(restaurantNamesDimension)
                         .group(function(d) { return "";})  //TODO: get rid of this somehow.
+												.on('renderlet', function(chart, filter){
+													$(".dc-table-row").click(function(e){
+																$(this).find('.pin')[0].onclick();
+																$(this).find('.pin').toggleClass("pinned");
+													});
+													// d3.select('rowChart').on('click', function(d){
+													// 	pinned.push(d);
+													// })
+												})
                         .columns([
 													{
 														label: "Pinned",
 														format: function(d){
+															// if(pinned[d]) then add class pinned to this image
 															return " <img class=\"pin\" src=\"images\\pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
 																				+ d.business_id + "\',\'" + d.name + "\',"
 																				+ d.price_range + "," + d.stars + ",\'"
@@ -363,7 +385,9 @@ function drawMarkerSelect(data) {
                           }
                         ])
                         .size(20);
-
+												/*.onClick(function(d){
+				console.log(d);
+			});*/
 
       dc.renderAll(groupname);
 
@@ -371,7 +395,7 @@ function drawMarkerSelect(data) {
 
 /*
 			var dataDim = xf.dimension(function(d) {return d.name;});
-			datatable = dc.dataTable(".container .table", groupname)
+			datatable = dc.dataTable(".wrapper .table", groupname)
 												 .dimension(dataDim)
 												 .group(function(d) { return "";})  //TODO: get rid of this somehow.
 												 .columns([
@@ -419,17 +443,4 @@ function drawMarkerSelect(data) {
 												 });
 
 */
-
-
-		$(".dc-table-row").click(function(e){
-					$(this).find('.pin')[0].onclick();
-					$(this).find('.pin').toggle();
-		});
-
-
-	/*	$(".dc-table-row").hover(function() {
-			    $(this).find('.pin').show();
-		}, function() {
-			    $(this).find('.pin').hide();
-		});*/
 }
