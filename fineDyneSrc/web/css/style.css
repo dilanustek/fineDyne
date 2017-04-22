@@ -9,6 +9,12 @@
   margin-right:30px;
 }
 
+.allPage{
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
 .wrapper{
   display: flex;
   flex-direction: column;

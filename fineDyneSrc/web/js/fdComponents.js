@@ -59,33 +59,33 @@ function pinRestaurant (business_id, name, price_range, stars, cuisine) {
 
 		var starsSvg = "";
 		for(i=1; i<stars; i++){
-			starsSvg += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+			starsSvg += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 		}
 
 				//final star is full
 		if (stars % 1 === 0) {
-			starsSvg += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+			starsSvg += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 		} else {
 			// final star is a half star
-			starsSvg += "<img src=\" images\\redHalfStar.svg \" width='10px'>";
+			starsSvg += "<img src=\" css\\images\\redHalfStar.svg \" width='10px'>";
 		}
 
 
 		var dollarSigns = "";
 		// price range
 		for(i=0; i<price_range ; i++){
-			dollarSigns += "<img src=\" images\\dollar.png \" width='10px'>";
+			dollarSigns += "<img src=\" css\\images\\dollar.png \" width='10px'>";
 		}
 
 		var itemHtml = "<div class=\"inRow\" id=\"" + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3; margin-bottom:8px;\">"
 					+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
-					+ "<div class=\"inColumn\""
+					+ "<div class=\"inColumn\" style=\"position:absolute; margin-left:90px; margin-top:5px; \" "
 					+ "<p><b>" + name + "</b></p>"
 					+ "<p>" + starsSvg + " " + dollarSigns + "  " + cuisine + "</p>"
 					+ "<p> <b>Review:</b> 'I was there once and it was lovely! Tasty food and great atmosphere!' </p>"
 					+ "</div>"
 					+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" "
-					+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"images\\close.svg\" >" + "</div>"
+					+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"css\\images\\close.svg\" >" + "</div>"
 					+ "</div>";
 
 		// there was nothing before so replace old html
@@ -211,22 +211,22 @@ function drawMarkerSelect(data) {
 
 							// Quality
 							for(i=1; i<kv.value.stars; i++){
-								returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+								returnStr += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 							}
 
 									//final star is full
 							if (kv.value.stars % 1 === 0) {
-								returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+								returnStr += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 							} else {
 								// final star is a half star
-								returnStr += "<img src=\" images\\redHalfStar.svg \" width='10px'>";
+								returnStr += "<img src=\" css\\images\\redHalfStar.svg \" width='10px'>";
 							}
 
 							returnStr +="<br>";
 
 							// price range
               for(i=0; i<kv.value.price_range ; i++){
-								returnStr += "<img src=\" images\\dollar.png \" width='10px'>";
+								returnStr += "<img src=\" css\\images\\dollar.png \" width='10px'>";
               }
 
 							// cuisine
@@ -330,7 +330,7 @@ function drawMarkerSelect(data) {
 														label: "Pinned",
 														format: function(d){
 															// if(pinned[d]) then add class pinned to this image
-															return " <img class=\"pin\" src=\"images\\pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
+															return " <img class=\"pin\" src=\"css\\images\\pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
 																				+ d.business_id + "\',\'" + d.name + "\',"
 																				+ d.price_range + "," + d.stars + ",\'"
 																				+ d.cuisine + "\'); \"  > "
@@ -346,17 +346,17 @@ function drawMarkerSelect(data) {
                               format: function (d) {
 																	var returnStr = "";
 																	for(i=1; i<d.stars ; i++){
-																		returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+																		returnStr += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 																	}
 
 																	//final star is full
 																	if (d.stars % 1 === 0) {
-																		returnStr += "<img src=\" images\\Red_star.svg.png \" width='10px'>";
+																		returnStr += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 																		return returnStr;
 																	}
 
 																	// final star is a half star
-																	returnStr += "<img src=\" images\\redHalfStar.svg \" width='10px'>";
+																	returnStr += "<img src=\" css\\images\\redHalfStar.svg \" width='10px'>";
 																	return returnStr;
 															}
 
@@ -373,7 +373,7 @@ function drawMarkerSelect(data) {
 
 																	var returnStr = "";
 																		for(i=0; i<d.price_range ; i++){
-																			returnStr += "<img src=\" images\\dollar.png \" width='10px'>";
+																			returnStr += "<img src=\" css\\images\\dollar.png \" width='10px'>";
 																		}
 																		return returnStr;
 
