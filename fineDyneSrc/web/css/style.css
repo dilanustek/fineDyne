@@ -62,6 +62,16 @@
 
 .pin.pinned{
   visibility: visible;
+  transform: rotate(-45deg);
+}
+
+.data-table-head{
+    cursor: pointer;
+}
+
+.table{
+    width: auto;
+    margin-bottom: 0;
 }
 
 .dc-table-row{
