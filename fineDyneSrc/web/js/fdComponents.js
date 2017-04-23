@@ -8,7 +8,7 @@ var starsDimension;
 var categoriesDimension;
 
 var priceBar;
-var marker;
+var markerChart;
 var starBar;
 var categoriesBar;
 var dataTable;
@@ -40,7 +40,7 @@ function zoomCluster(zoom){
 	return 0;
 }
 function resetCharts() {
-	marker.filterAll();
+	markerChart.filterAll();
 	starBar.filterAll();
 	priceBar.filterAll();
 	categoriesBar.filterAll();
@@ -183,7 +183,7 @@ function drawMarkerSelect(data) {
 		}
 	);
 
-	marker = dc_leaflet.markerChart(".map", groupname)
+	markerChart = dc_leaflet.markerChart(".map", groupname)
 	.dimension(restaurantNamesDimension)
 	.group(restaurantsGroup)
 	.width(600)
