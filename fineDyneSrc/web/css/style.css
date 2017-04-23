@@ -86,6 +86,10 @@
   visibility: visible;
 }
 
+#paginate {
+    margin-top: 20px;
+}
+
 .chart-body {
     transform: translate(52, 10);
 }

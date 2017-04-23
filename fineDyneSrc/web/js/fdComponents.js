@@ -379,9 +379,13 @@ datatable = dc.dataTable(".wrapper .data-table", groupname)
 	},
 	function(d){return d.cuisine}
 ])
-.size(20);
+.size(Infinity)
+.order(d3.ascending);
+
+update();
 
 
+// Sorting when a datatable label is clicked
 $('.wrapper .data-table').on('click', '.data-table-head', function() {
 	var column = $(this).attr("data-col");
 	// keep these! maybe.
@@ -443,3 +447,34 @@ function(d){return d.cuisine}
 
 dc.renderAll(groupname);
 }
+
+
+
+// Pagination for the list view
+  var ofs = 0, pag = 10;
+  function display() {
+      d3.select('#begin')
+          .text(ofs);
+      d3.select('#end')
+          .text(ofs+pag-1);
+      d3.select('#last')
+          .attr('disabled', ofs-pag<0 ? 'true' : null);
+      d3.select('#next')
+          .attr('disabled', ofs+pag>=xf.size() ? 'true' : null);
+      d3.select('#size').text(xf.size());
+  }
+  function update() {
+      datatable.beginSlice(ofs);
+      datatable.endSlice(ofs+pag);
+      display();
+  }
+  function next() {
+      ofs += pag;
+      update();
+      datatable.redraw();
+  }
+  function last() {
+      ofs -= pag;
+      update();
+      datatable.redraw();
+  }
