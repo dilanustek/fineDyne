@@ -241,16 +241,34 @@ function drawMarkerSelect(data) {
               returnStr += "<button type=\"btn\" onclick=\"pinRestaurant(\'"
 												+ kv.value.business_id + "\',\'" + kv.value.name + "\',"
 												+ kv.value.price_range + "," + kv.value.stars + ",\'"
-												+ kv.value.cuisine + "\')\" > ";
+												+ kv.value.cuisine + "\')\" > "
+												+ "Pin / Unpin</button>";
 
-							if (pinned[kv.value.business_id] == true) {
+							/*if (pinned[kv.value.business_id] == true) {
 											returnStr += "Unpin</button>";
 							} else {
 											returnStr += "Pin</button>";
-							}
+							}*/
 
               return returnStr;
           });
+
+/*map = marker.map();
+
+					var greenIcon = L.icon({
+					    iconUrl: 'http://www.clker.com/cliparts/Z/x/U/0/B/3/red-pin.svg',
+					    shadowUrl: 'http://www.clker.com/cliparts/Z/x/U/0/B/3/red-pin.svg',
+
+					    iconSize:     [38, 95], // size of the icon
+					    shadowSize:   [50, 64], // size of the shadow
+					    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+					    shadowAnchor: [4, 62],  // the same for the shadow
+					    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+					});
+
+					L.marker([43.733372, -79.354782], {icon: greenIcon}).addTo(map);
+
+		var greenIcon = new LeafIcon({iconUrl: 'leaf-green.png'});
 
 
 		setTimeout(function(){
@@ -266,7 +284,7 @@ function drawMarkerSelect(data) {
            //map.fitBounds(group.getBounds());
           // var bounds = L.latLngBounds(restaurantsGroup);
           // map.fitBounds(bounds);
-
+*/
 
 // Stars bar graph
 		starsDimension = xf.dimension(function(d) {
@@ -312,7 +330,7 @@ function drawMarkerSelect(data) {
 
 
 // Data table
-
+/*
         datatable = dc.dataTable(".wrapper .table", groupname)
                         .dimension(restaurantNamesDimension)
                         .group(function(d) { return "";})  //TODO: get rid of this somehow.
@@ -327,7 +345,7 @@ function drawMarkerSelect(data) {
 												})
                         .columns([
 													{
-														label: "Pinned",
+														label: "Pin",
 														format: function(d){
 															// if(pinned[d]) then add class pinned to this image
 															return " <img class=\"pin\" src=\"css\\images\\pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
@@ -365,12 +383,6 @@ function drawMarkerSelect(data) {
                           {
                               label: "Price Range",
                               format: function (d) {
-                                /*  var returnStr = "";
-                                  for(i=0; i<d.price_range ; i++){
-                                    returnStr +='$';
-                                  }
-                                  return returnStr;*/
-
 																	var returnStr = "";
 																		for(i=0; i<d.price_range ; i++){
 																			returnStr += "<img src=\" css\\images\\dollar.png \" width='10px'>";
@@ -385,11 +397,8 @@ function drawMarkerSelect(data) {
                           }
                         ])
                         .size(20);
-												/*.onClick(function(d){
-				console.log(d);
-			});*/
 
-      dc.renderAll(groupname);
+			*/
 
 
 
@@ -443,4 +452,7 @@ function drawMarkerSelect(data) {
 												 });
 
 */
+
+
+    dc.renderAll(groupname);
 }

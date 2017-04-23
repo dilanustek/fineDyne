@@ -75,3 +75,15 @@
 .dc-table-row:hover .pin{
   visibility: visible;
 }
+
+.y-axis-label {
+   transform: translate(8,90),rotate(-90);
+}
+
+.axis .x {
+  transform: translate(52,170);
+}
+
+.axis .y {
+  transform: translate(52,10);
+}
