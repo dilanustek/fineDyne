@@ -110,7 +110,7 @@ function unpinRestaurant (business_id) {
 }
 
 
-d3.csv("data\\april_20_so_far.csv", function(data) {
+d3.csv("data\\all_cuisine.csv", function(data) {
 	allData = data;
 	drawMarkerSelect(allData);
 });
@@ -322,7 +322,7 @@ categoriesBar = dc.rowChart(".wrapper .categoriesBar",groupname)
 .dimension(categoriesDimension)
 .group(categoriesGroup)
 .width(300)
-.height(400)
+.height(700)
 .renderLabel(true)
 .elasticX(true);
 
