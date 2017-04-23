@@ -141,7 +141,7 @@ function drawMarkerSelect(data) {
 		});
 	})
 	.ordinalColors(['#4268f4'])
-	.yAxisLabel("# of restaurants")
+	.yAxisLabel("# of Restaurants")
 	.elasticY(true);
 
 
@@ -308,7 +308,7 @@ starBar = dc.barChart(".starBar",groupname)
 	});
 })
 .ordinalColors(['#f20707'])
-.yAxisLabel("# of restaurants", 30)
+.yAxisLabel("# of Restaurants", 30)
 .elasticY(true);
 
 starBar.yAxis().ticks(4);
@@ -330,6 +330,29 @@ categoriesBar = dc.rowChart(".categoriesBar",groupname)
 .colors(d3.scale.category20b());
 
 categoriesBar.xAxis().ticks(4);
+
+
+var addXLabel = function(chartToUpdate, displayText) {
+  var textSelection = chartToUpdate.svg()
+			.append("text")
+			  .attr("class", "x-axis-label")
+			  .attr("text-anchor", "middle")
+			  .attr("x", chartToUpdate.width() / 2)
+			  .attr("y", chartToUpdate.height() - 10)
+			  .text(displayText);
+  var textDims = textSelection.node().getBBox();
+  var chartMargins = chartToUpdate.margins();
+
+  // Dynamically adjust positioning after reading text dimension from DOM
+  textSelection
+	  .attr("x", chartMargins.left + (chartToUpdate.width()
+		- chartMargins.left - chartMargins.right) / 2)
+	  .attr("y", chartToUpdate.height() - Math.ceil(textDims.height) / 6);
+};
+
+categoriesBar.on("postRender", function(chart) {
+   addXLabel(chart, "# of Restaurants");
+ });
 
 
 // Data table
