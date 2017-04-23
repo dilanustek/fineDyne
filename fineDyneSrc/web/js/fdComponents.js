@@ -13,6 +13,8 @@ var starBar;
 var categoriesBar;
 var dataTable;
 
+var count;
+
 var pinned = [];
 
 var map;
@@ -125,7 +127,7 @@ function drawMarkerSelect(data) {
 
 	var priceGroup = priceDimension.group().reduceCount();
 
-	priceBar = dc.barChart(".wrapper .priceBar",groupname)
+	priceBar = dc.barChart(".priceBar",groupname)
 	.dimension(priceDimension)
 	.group(priceGroup)
 	.width(300)
@@ -181,7 +183,7 @@ function drawMarkerSelect(data) {
 		}
 	);
 
-	marker = dc_leaflet.markerChart(".wrapper .inRowOppositeSides .map", groupname)
+	marker = dc_leaflet.markerChart(".map", groupname)
 	.dimension(restaurantNamesDimension)
 	.group(restaurantsGroup)
 	.width(600)
@@ -190,7 +192,7 @@ function drawMarkerSelect(data) {
 	.zoom(11)
 	.cluster(true)
 	.clusterOptions({
-		disableClusteringAtZoom: 15,
+		disableClusteringAtZoom: 16,
 		spiderfyOnMaxZoom: false
 	})
 	.mapOptions({
@@ -292,7 +294,7 @@ starsDimension = xf.dimension(function(d) {
 });
 var starsGroup = starsDimension.group().reduceCount();
 
-starBar = dc.barChart(".wrapper .starBar",groupname)
+starBar = dc.barChart(".starBar",groupname)
 .dimension(starsDimension)
 .group(starsGroup)
 .width(300)
@@ -318,21 +320,23 @@ categoriesDimension = xf.dimension(function(d) {
 });
 var categoriesGroup = categoriesDimension.group().reduceCount();
 
-categoriesBar = dc.rowChart(".wrapper .categoriesBar",groupname)
+categoriesBar = dc.rowChart(".categoriesBar",groupname)
 .dimension(categoriesDimension)
 .group(categoriesGroup)
 .width(300)
 .height(700)
 .renderLabel(true)
-.elasticX(true);
+.elasticX(true)
+.colors(d3.scale.category20b());
 
 categoriesBar.xAxis().ticks(4);
 
 
 // Data table
+var dataDim = restaurantNamesDimension;
 
-datatable = dc.dataTable(".wrapper .data-table", groupname)
-.dimension(restaurantNamesDimension)
+datatable = dc.dataTable(".data-table", groupname)
+.dimension(dataDim)
 .group(function(d) { return "";})  //TODO: get rid of this somehow.
 .on('renderlet', function(chart, filter){
 	$(".dc-table-row").click(function(e){
@@ -384,65 +388,32 @@ datatable = dc.dataTable(".wrapper .data-table", groupname)
 
 update();
 
+var order = d3.ascending;
 
 // Sorting when a datatable label is clicked
-$('.wrapper .data-table').on('click', '.data-table-head', function() {
+$('.data-table').on('click', '.data-table-head', function() {
 	var column = $(this).attr("data-col");
 	// keep these! maybe.
 	//dataDim.dispose();
 	//dataDim = xf.dimension(function(d) {return d[column];});
-	//datatable.dimension(dataDim)
+	//datatable.dimension(dataDim);
+
 	datatable.sortBy(function(d) {
 		if(column === "stars" || column === "price_range")
 			return parseFloat(d[column]);
 		else
 			return d[column];
-	});
+	})
+	.order(order);
 	datatable.redraw();
+
+	if (order === d3.ascending) {
+		order = d3.descending;
+	} else {
+		order = d3.ascending;
+	}
 });
 
-
-
-
-/*
-var dataDim = xf.dimension(function(d) {return d.name;});
-datatable = dc.dataTable(".wrapper .data-table", groupname)
-.dimension(dataDim)
-.group(function(d) { return "";})  //TODO: get rid of this somehow.
-.columns([
-{
-function(d){
-return " <img class=\"pin\" src=\"pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
-+ d.business_id + "\',\'" + d.name + "\',"
-+ d.price_range + "," + d.stars + ",\'"
-+ d.cuisine + "\'); \"  > "
-}
-},
-{
-function(d){
-return d.name }
-},
-{
-function (d) { return d.stars}
-
-}
-,
-{
-function (d) {
-var returnStr = "";
-for(i=0; i<d.price_range ; i++){
-returnStr +='$';
-}
-return returnStr;
-}
-},
-{
-function(d){return d.cuisine}
-}
-])
-.size(20);
-
-*/
 
 
 dc.renderAll(groupname);
@@ -453,6 +424,20 @@ dc.renderAll(groupname);
 // Pagination for the list view
   var ofs = 0, pag = 10;
   function display() {
+	//   var all = xf.groupAll();
+	//
+	//   count = dc.dataCount('.dc-data-count')
+	//       .dimension(xf)
+	//       .group(all);
+	//
+	// count /* dc.dataCount('.dc-data-count', 'chartGroup'); */
+	//    .dimension(xf)
+	//    .group(all)
+	//    .html({
+    //         some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
+    //             ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a>',
+    //     });
+
       d3.select('#begin')
           .text(ofs);
       d3.select('#end')
