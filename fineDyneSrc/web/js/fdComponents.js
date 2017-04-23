@@ -110,7 +110,7 @@ function unpinRestaurant (business_id) {
 }
 
 
-d3.csv("data\\all_cuisine.csv", function(data) {
+d3.csv("data\\all_cuisine_dupes_removed.csv", function(data) {
 	allData = data;
 	drawMarkerSelect(allData);
 });

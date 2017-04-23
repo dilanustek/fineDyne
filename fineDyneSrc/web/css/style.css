@@ -86,7 +86,11 @@
   visibility: visible;
 }
 
-.y-axis-label {
+.chart-body {
+    transform: translate(52, 10);
+}
+
+.y-axis-label .y-label{
    transform: translate(8,90),rotate(-90);
 }
 
