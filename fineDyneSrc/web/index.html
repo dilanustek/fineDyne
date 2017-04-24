@@ -42,6 +42,7 @@
 
 		<div class="title">
     		<h1>FineDyne  <font size="5">in Toronto</font></h1>
+			<hl>
 		</div>
 
 		<div id="fakeLoader"></div>
@@ -61,7 +62,7 @@
 								<div class="categoriesBar"></div>
 					</div>
 					<div class="controls">
-							<button type="btn" class="controlButtons" onclick="resetCharts()">Reset All</button>
+							<button type="btn" class="btn btn-primary" onclick="resetCharts()">Reset All</button>
 					</div>
 				</div>
 
@@ -69,9 +70,7 @@
 						<div class="map"></div>
 						<div class="pinnedList">
 								<p><font size="4.5"><b>Pinned Places</b></font></p>
-								<div class="inColumn" id="pinnedItems">
-										<p> Pin items on the map and from the list on the right to keep track of them here!</p>
-								</div>
+								<div class="inColumn" id="pinnedItems"></div>
 						</div>
 				</div>
 
@@ -89,8 +88,8 @@
 					</table>
 					<div id="paginate" class="inRow">
 						Showing &nbsp; <span id="begin"></span> &nbsp;-&nbsp;<span id="end"></span> &nbsp; of &nbsp; <span id="size"></span>.
-						<input id="last" class="btn" type="Button" value="<" onclick="javascript:last()" />
-						<input id="next" class="btn" type="button" value=">" onclick="javascript:next()"/>
+						<input id="last" class="btn btn-default" type="Button" value="<" onclick="javascript:last()" />
+						<input id="next" class="btn btn-default" type="button" value=">" onclick="javascript:next()"/>
 						<div class="dc-data-count"></div>
 					</div>
 				</div>

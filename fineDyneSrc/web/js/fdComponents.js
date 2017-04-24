@@ -14,8 +14,12 @@ var categoriesBar;
 var dataTable;
 
 var count;
-
-var pinned = [];
+// whether an item is pinned, indexed by business_id
+var pinned = {};
+// references to the pin markers on the map, indexed by business_id
+var pinMarkers = {};
+// reference to the hover marker
+var hoverMarker;
 
 var map;
 var restaurantsGroup;
@@ -48,73 +52,153 @@ function resetCharts() {
 	dc.redrawAll(groupname);
 }
 
-function pinRestaurant (business_id, name, price_range, stars, cuisine) {
-	// put in set of pinned elements so you don't pin it again
-	if (pinned[business_id] == true) {
-		unpinRestaurant(business_id);
-		return;
-	}
-	else pinned[business_id] = true;
-	console.log(pinned)
+function togglePin(business_id){
+    if(pinned[business_id]){
+        delete pinned[business_id];
+        removePinMarker(business_id);
+    }
+    else{
+        pinned[business_id]=true;
+        addPinMarker(business_id);
+    }
 
-	var randomImage = randomImageArray[Math.floor(Math.random() * randomImageArray.length)];
+    // show the pin in the datatable
+    datatable.redraw();
 
-	var starsSvg = "";
-	for(i=1; i<stars; i++){
-		starsSvg += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
-	}
+    // add or remove the pinned restaurants in the list
+    updatePinnedRestaurants();
 
-	//final star is full
-	if (stars % 1 === 0) {
-		starsSvg += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
-	} else {
-		// final star is a half star
-		starsSvg += "<img src=\" css\\images\\redHalfStar.svg \" width='10px'>";
-	}
-
-
-	var dollarSigns = "";
-	// price range
-	for(i=0; i<price_range ; i++){
-		dollarSigns += "<img src=\" css\\images\\dollar.png \" width='10px'>";
-	}
-
-	var itemHtml = "<div class=\"inRow\" id=\"" + business_id + "\" style=\"width:600px; height:80px; border:1px solid #b3b3b3; margin-bottom:8px;\">"
-	+ "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
-	+ "<div class=\"inColumn\" style=\"position:absolute; margin-left:90px; margin-top:5px; \" "
-	+ "<p><b>" + name + "</b></p>"
-	+ "<p>" + starsSvg + " " + dollarSigns + "  " + cuisine + "</p>"
-	+ "<p> <b>Review:</b> 'I was there once and it was lovely! Tasty food and great atmosphere!' </p>"
-	+ "</div>"
-	+ "<div style=\"margin-left:auto;\"  onmouseover=\"this.style.background='#decdcd';\" "
-	+ "onmouseout=\"this.style.background='white';\"  onclick=\" unpinRestaurant(\'" + business_id + "\'); \"  \"> <img src=\"css\\images\\close.svg\" >" + "</div>"
-	+ "</div>";
-
-	// there was nothing before so replace old html
-	if (Object.keys(pinned).length == 1) {
-		$("#pinnedItems").html( itemHtml );
-	} else { // add to the top of the pinned list
-		$("#pinnedItems").prepend( itemHtml );
-	}
-
+    // ideally, we would redraw the popup to change the lable of the Pin/Unpin button
 }
 
-function unpinRestaurant (business_id) {
-	//$("#pinnedItems").remove("#" + business_id );
-	$("#" + business_id).remove();
-	delete pinned[business_id];
-	console.log(pinned);
-
-	if (Object.keys(pinned).length == 0) {
-		$("#pinnedItems").html( "	<p> Pin items on the map and from the list on the right to keep track of them here!</p>" );
-	}
-
+function getByBusinessId(business_id){
+    return (allData.filter(function(d){
+        return d.business_id === business_id;
+    }))[0];
 }
 
+function addPinMarker(business_id){
+    var d=getByBusinessId(business_id);
+
+    var pinIcon = L.icon({
+        iconUrl: 'css/images/location_pin_sphere_red.png',
+
+        iconSize:     [20, 45], // size of the icon
+        iconAnchor:   [0, 45], // point of the icon which will correspond to marker's location
+        shadowAnchor: [4, 62],  // the same for the shadow
+        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+
+    pinMarkers[business_id] = L.marker([d.latitude, d.longitude], {icon: pinIcon});
+    pinMarkers[business_id].addTo(map);
+}
+
+function removePinMarker(business_id){
+    pinMarkers[business_id].remove();
+}
+
+function addHoverMarker(business_id){
+    var d=getByBusinessId(business_id);
+
+    var hoverIcon = L.icon({
+        iconUrl: 'css/images/marker-icon-red-2x.png',
+
+        iconSize:     [25, 41], // size of the icon
+        iconAnchor:   [12.5, 41], // point of the icon which will correspond to marker's location
+        shadowAnchor: [4, 62],  // the same for the shadow
+        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+
+    // to avoid duplication when pin is followed by mousemove
+    if(hoverMarker)
+        hoverMarker.remove();
+
+    hoverMarker = L.marker([d.latitude, d.longitude], {icon: hoverIcon});
+    hoverMarker.addTo(map);
+}
+
+function removeHoverMarker(){
+    hoverMarker.remove();
+}
+
+function updatePinnedRestaurants(){
+    // there is nothing pinned, display hint text
+    if (!Object.keys(pinned).length) {
+        $("#pinnedItems").html("<p> Pin items on the map and from the list on the right to keep track of them here!</p>");
+        return;
+    }
+    else
+        $("#pinnedItems").children("p").remove();
+
+    var pinnedRestaurants = d3.select("#pinnedItems").selectAll('.pinnedRestaurant')
+    .data(allData.filter(function(d){
+        return pinned[d.business_id];
+    }).sort(function(a,b){
+        return a.name > b.name;
+    }));
+
+    pinnedRestaurants.enter()
+    .append("div")
+    .attr("class","pinnedRestaurant")
+
+    pinnedRestaurants
+    .html(renderRestaurant);
+
+    pinnedRestaurants.exit()
+    .remove();
+}
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+};
+
+function renderRestaurant(d){
+    var h = d.name.hashCode();
+    var randomImage = randomImageArray[(d.name.hashCode() % randomImageArray.length)];
+
+    var starsSvg = "";
+    for(i=1; i<d.stars; i++){
+        starsSvg += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
+    }
+
+    //final star is full
+    if (d.stars % 1 === 0) {
+        starsSvg += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
+    } else {
+        // final star is a half star
+        starsSvg += "<img src=\" css\\images\\redHalfStar.svg \" width='10px'>";
+    }
+
+
+    var dollarSigns = "";
+    // price range
+    for(i=0; i<d.price_range ; i++){
+        dollarSigns += "<img src=\" css\\images\\dollar.png \" width='10px'>";
+    }
+
+    return "<div class=\"inRow\" id=\"" + d.business_id + "\""
+    + "onmouseenter=addHoverMarker('" + d.business_id + "') onmouseleave=removeHoverMarker()>"
+    + "<img src=\"" + randomImage + "\" width=\"70px\" style=\"margin-left:10px; margin-right:10px;\">"
+    + "<div class=\"inColumn\">"
+    + "<p><b>" + d.name + "</b></p>"
+    + "<p>" + starsSvg + " " + dollarSigns + "  " + d.cuisine + "</p>"
+    + "<p> <b>Review:</b> 'I was there once and it was lovely! Tasty food and great atmosphere!' </p>"
+    + "</div>"
+    + "<div class='closeButton' onclick=\" togglePin(\'" + d.business_id + "\'); \"  \"> <img src=\"css\\images\\close.svg\" >" + "</div>"
+    + "</div>";
+}
 
 d3.csv("data\\all_cuisine_dupes_removed.csv", function(data) {
 	allData = data;
 	drawMarkerSelect(allData);
+    updatePinnedRestaurants();
 });
 
 function drawMarkerSelect(data) {
@@ -133,18 +217,19 @@ function drawMarkerSelect(data) {
 	.width(300)
 	.height(150)
 	.renderLabel(false)
-	.x(d3.scale.ordinal())
+	.x(d3.scale.ordinal().domain([1,2,3,4]))
 	.xUnits(dc.units.ordinal)
 	.brushOn(true)
 	.on('renderlet.barclicker', function(chart, filter){
-		updatePagination();
+        updatePagination();
 		chart.selectAll('rect.bar').on('click.custom', function(d) {
 		});
 	})
 	.ordinalColors(['#4268f4'])
-	.yAxisLabel("# of Restaurants")
+	.yAxisLabel("# of Restaurants", 15)
 	.elasticY(true);
 
+    priceBar.margins().left = 65;
 
 	priceBar.xAxis().tickFormat(function (v) {
 		var resultStr = '';
@@ -194,10 +279,10 @@ function drawMarkerSelect(data) {
 	.cluster(true)
 	.clusterOptions({
 		disableClusteringAtZoom: 16,
-		spiderfyOnMaxZoom: false
-	})
-	.mapOptions({
-		riseOnHover: true
+        spiderfyOnMaxZoom: false
+    })
+    .mapOptions({
+        riseOnHover: true
 	})
 	.valueAccessor(function(kv) {
 		return kv.value.count;
@@ -207,18 +292,21 @@ function drawMarkerSelect(data) {
 	})
 	.filterByArea(true)
 	.popup(function(kv,marker) {
+        var d=kv.value;
 		var returnStr = "";
 
+        //console.log(d,marker);
+
 		// Name
-		returnStr = "<b>" + kv.value.name + " </b> <br> <br>";
+		returnStr = "<b>" + d.name + " </b> <br> <br>";
 
 		// Quality
-		for(i=1; i<kv.value.stars; i++){
+		for(i=1; i<d.stars; i++){
 			returnStr += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 		}
 
 		//final star is full
-		if (kv.value.stars % 1 === 0) {
+		if (d.stars % 1 === 0) {
 			returnStr += "<img src=\" css\\images\\Red_star.svg.png \" width='10px'>";
 		} else {
 			// final star is a half star
@@ -228,34 +316,37 @@ function drawMarkerSelect(data) {
 		returnStr +="<br>";
 
 		// price range
-		for(i=0; i<kv.value.price_range ; i++){
+		for(i=0; i<d.price_range ; i++){
 			returnStr += "<img src=\" css\\images\\dollar.png \" width='10px'>";
 		}
 
 		// cuisine
-		returnStr += " <br>" +  kv.value.cuisine ;
+		returnStr += " <br>" +  d.cuisine ;
 
 		// review
 		returnStr += "<p> Review: \"I was there once and it was lovely! Tasty food and great atmosphere!\"</p>"
 
-
-
 		// pin button
-		returnStr += "<button type=\"btn\" onclick=\"pinRestaurant(\'"
-		+ kv.value.business_id + "\',\'" + kv.value.name + "\',"
-		+ kv.value.price_range + "," + kv.value.stars + ",\'"
-		+ kv.value.cuisine + "\')\" > "
-		+ "Pin / Unpin</button>";
+        returnStr += "<button type='btn' onclick=togglePin('" + d.business_id + "')>Pin / Unpin</button>"
 
-		/*if (pinned[kv.value.business_id] == true) {
-		returnStr += "Unpin</button>";
-	} else {
-	returnStr += "Pin</button>";
-}*/
+    return returnStr;
+    });
 
-return returnStr;
-});
+/*
+setTimeout(function(){
+map = markerChart.map();
 
+var group = new L.featureGroup(restaurantsGroup);
+var bounds = group.getBounds();
+//   map.fitBounds(bounds);
+// var bounds = L.latLngBounds(restaurantsGroup);
+// map.fitBounds(bounds);
+}, 500);
+//var group = new L.featureGroup([marker1, marker2, marker3]);
+//map.fitBounds(group.getBounds());
+// var bounds = L.latLngBounds(restaurantsGroup);
+// map.fitBounds(bounds);
+*/
 
 // Stars bar graph
 starsDimension = xf.dimension(function(d) {
@@ -273,13 +364,15 @@ starBar = dc.barChart(".starBar",groupname)
 .xUnits(dc.units.ordinal)
 .brushOn(true)
 .on('renderlet.barclicker', function(chart, filter){
-	updatePagination();
+    updatePagination();
 	chart.selectAll('rect.bar').on('click.custom', function(d) {
 	});
 })
 .ordinalColors(['#f20707'])
-.yAxisLabel("# of Restaurants", 30)
-.elasticY(true);
+.elasticY(true)
+.yAxisLabel("# of Restaurants", 15);
+
+starBar.margins().left = 60;
 
 starBar.yAxis().ticks(4);
 
@@ -300,7 +393,7 @@ categoriesBar = dc.rowChart(".categoriesBar",groupname)
 .colors(d3.scale.category20b());
 
 categoriesBar.xAxis().ticks(4);
-
+categoriesBar.margins().bottom = 40;
 
 var addXLabel = function(chartToUpdate, displayText) {
   var textSelection = chartToUpdate.svg()
@@ -308,7 +401,7 @@ var addXLabel = function(chartToUpdate, displayText) {
 			  .attr("class", "x-axis-label")
 			  .attr("text-anchor", "middle")
 			  .attr("x", chartToUpdate.width() / 2)
-			  .attr("y", chartToUpdate.height() - 10)
+			  .attr("y", chartToUpdate.height() + 20)
 			  .text(displayText);
   var textDims = textSelection.node().getBBox();
   var chartMargins = chartToUpdate.margins();
@@ -324,9 +417,9 @@ categoriesBar.on("postRender", function(chart) {
    addXLabel(chart, "# of Restaurants");
  });
 
- categoriesBar.on("renderlet", function(chart) {
-	 updatePagination();
- });
+categoriesBar.on("renderlet", function(chart){
+    updatePagination();
+});
 
 
 // Data table
@@ -336,21 +429,22 @@ datatable = dc.dataTable(".data-table", groupname)
 .dimension(dataDim)
 .group(function(d) { return "";})  //TODO: get rid of this somehow.
 .on('renderlet', function(chart, filter){
-	$(".dc-table-row").click(function(e){
-		$(this).find('.pin')[0].onclick();
-		$(this).find('.pin').toggleClass("pinned");
-	});
-	// d3.select('rowChart').on('click', function(d){
-	// 	pinned.push(d);
-	// })
+
+    chart.selectAll('.dc-table-row').on("click", function(d) {
+        togglePin(d.business_id);
+    });
+
+    chart.selectAll('.dc-table-row').on("mouseenter", function(d) {
+        addHoverMarker(d.business_id);
+    });
+
+    chart.selectAll('.dc-table-row').on("mouseleave", function(d) {
+        removeHoverMarker();
+    });
 })
 .columns([
 	function(d){
-		// if(pinned[d]) then add class pinned to this image
-		return " <img class=\"pin\" src=\"css\\images\\pin.png\" width=\"20px\" onclick=\"pinRestaurant(\'"
-		+ d.business_id + "\',\'" + d.name + "\',"
-		+ d.price_range + "," + d.stars + ",\'"
-		+ d.cuisine + "\'); \"  > "
+		return "<img class='pin" + (pinned[d.business_id]? " pinned" : "") + "' src='css\\images\\pin.png'>"
 	},
 	function(d){
 		return d.name
@@ -411,60 +505,24 @@ $('.data-table').on('click', '.data-table-head', function() {
 	}
 });
 
-
-
 dc.renderAll(groupname);
 
-
- map = markerChart.map();
-
-  var greenIcon = L.icon({
-  iconUrl: 'http://icon-park.com/imagefiles/location_pin_sphere_red.png',
-
-  iconSize:     [20, 45], // size of the icon
-  iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-  shadowAnchor: [4, 62],  // the same for the shadow
-  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-  });
-
-  var pinMarker = L.marker([43.7649093, -79.2591327], {icon: greenIcon}).addTo(map);
-
-
-  setTimeout(function(){
-
-	//   map.eachLayer(function (layer) {
-	//       allMarkers.push(layer);
-	// 	 // console.log(allMarkers.size());
-	//   });
-
-  //var group = new L.featureGroup(restaurantNamesDimension.top(Number.POSITIVE_INFINITY));
- //var bounds = group.getBounds();
-    //map.fitBounds(bounds);
-  // var bounds = L.latLngBounds(restaurantNamesDimension.top(Number.POSITIVE_INFINITY));
-  // map.fitBounds(bounds);
-  }, 2000);
-  //var group = new L.featureGroup([marker1, marker2, marker3]);
-  //map.fitBounds(group.getBounds());
-  // var bounds = L.latLngBounds(restaurantsGroup);
-  // map.fitBounds(bounds);
-
-
+map = markerChart.map();
 }//drawMarkerSelect
 
 
 
 // Pagination for the list view
-  var ofs = 1, pag = 10;
+  var ofs = 0, pag = 10;
   function displayPagination() {
       d3.select('#begin')
-          .text(ofs);
+          .text(ofs+1);
       d3.select('#end')
           .text(function(){
-			  var allNum = restaurantNamesDimension.top(Number.POSITIVE_INFINITY);
-			  if(allNum-ofs < pag)
-			  return  (allNum-ofs);
-			  else return (ofs+pag-1);
-		  });
+              if(restaurantNamesDimension.top(Number.POSITIVE_INFINITY).length<10)
+              return  restaurantNamesDimension.top(Number.POSITIVE_INFINITY).length;
+              else return (ofs+pag);
+          });
       d3.select('#last')
           .attr('disabled', ofs-pag<0 ? 'true' : null);
       d3.select('#next')

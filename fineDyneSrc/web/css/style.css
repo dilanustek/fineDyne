@@ -1,3 +1,8 @@
+#fakeLoader{
+  z-index: 1001!important;
+}
+
+
 .title {
   margin-bottom: 25px;
 }
@@ -42,6 +47,42 @@
   justify-content: space-between;
 }
 
+.pinnedRestaurant .inRow{
+  position: relative;
+  width:500px;
+  height:100px;
+  border-radius: 2px;
+  box-shadow: 1px 4px 8px 0px rgba(0,0,0,0.15);
+  border-top: 1px solid #f2f2f2;
+  background-color: white;
+}
+
+.pinnedRestaurant .inRow:hover{
+  background-color: #f2f2f2;
+}
+
+.pinnedRestaurant .inColumn{
+  position:absolute;
+  margin-left:90px;
+}
+
+.pinnedRestaurant p{
+  margin-bottom: 0;
+  margin-right: 4px;
+}
+
+.pinnedRestaurant .closeButton{
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.pinnedRestaurant .closeButton:hover{
+  opacity: 0.8;
+}
+
 .controls {
   display: flex;
   align-items: center;
@@ -50,16 +91,12 @@
   margin-bottom: 30px;
 }
 
-.controlButtons {
-  font-size: 14px;
-  background-color: #e3e5f2;
-}
-
 .pinnedList {
   margin-top: 20px;
 }
 
 .pin{
+  width: 20px;
   visibility: hidden;
 }
 
@@ -82,7 +119,7 @@
 }
 
 .dc-table-row:hover{
-  background-color: #e2e2e2;
+  background-color: #f2f2f2;
 }
 
 .dc-table-row:hover .pin{
@@ -107,4 +144,8 @@
 
 .axis .y {
   transform: translate(52,10);
+}
+
+.dc-chart .axis text{
+  font-family: "Helvetica Neue";
 }
