@@ -137,6 +137,7 @@ function drawMarkerSelect(data) {
 	.xUnits(dc.units.ordinal)
 	.brushOn(true)
 	.on('renderlet.barclicker', function(chart, filter){
+		updatePagination();
 		chart.selectAll('rect.bar').on('click.custom', function(d) {
 		});
 	})
@@ -192,7 +193,8 @@ function drawMarkerSelect(data) {
 	.zoom(11)
 	.cluster(true)
 	.clusterOptions({
-		disableClusteringAtZoom: 16
+		disableClusteringAtZoom: 16,
+		spiderfyOnMaxZoom: false
 	})
 	.mapOptions({
 		riseOnHover: true
@@ -255,22 +257,6 @@ return returnStr;
 });
 
 
-/*
-setTimeout(function(){
-map = marker.map();
-
-var group = new L.featureGroup(restaurantsGroup);
-var bounds = group.getBounds();
-//   map.fitBounds(bounds);
-// var bounds = L.latLngBounds(restaurantsGroup);
-// map.fitBounds(bounds);
-}, 500);
-//var group = new L.featureGroup([marker1, marker2, marker3]);
-//map.fitBounds(group.getBounds());
-// var bounds = L.latLngBounds(restaurantsGroup);
-// map.fitBounds(bounds);
-*/
-
 // Stars bar graph
 starsDimension = xf.dimension(function(d) {
 	return d.stars;
@@ -287,6 +273,7 @@ starBar = dc.barChart(".starBar",groupname)
 .xUnits(dc.units.ordinal)
 .brushOn(true)
 .on('renderlet.barclicker', function(chart, filter){
+	updatePagination();
 	chart.selectAll('rect.bar').on('click.custom', function(d) {
 	});
 })
@@ -335,6 +322,10 @@ var addXLabel = function(chartToUpdate, displayText) {
 
 categoriesBar.on("postRender", function(chart) {
    addXLabel(chart, "# of Restaurants");
+ });
+
+ categoriesBar.on("renderlet", function(chart) {
+	 updatePagination();
  });
 
 
@@ -392,7 +383,7 @@ datatable = dc.dataTable(".data-table", groupname)
 .size(Infinity)
 .order(d3.ascending);
 
-update();
+updatePagination();
 
 var order = d3.ascending;
 
@@ -436,8 +427,26 @@ dc.renderAll(groupname);
   popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
   });
 
-  L.marker([43.7649093, -79.2591327], {icon: greenIcon}).addTo(map);
+  var pinMarker = L.marker([43.7649093, -79.2591327], {icon: greenIcon}).addTo(map);
 
+
+  setTimeout(function(){
+
+	//   map.eachLayer(function (layer) {
+	//       allMarkers.push(layer);
+	// 	 // console.log(allMarkers.size());
+	//   });
+
+  //var group = new L.featureGroup(restaurantNamesDimension.top(Number.POSITIVE_INFINITY));
+ //var bounds = group.getBounds();
+    //map.fitBounds(bounds);
+  // var bounds = L.latLngBounds(restaurantNamesDimension.top(Number.POSITIVE_INFINITY));
+  // map.fitBounds(bounds);
+  }, 2000);
+  //var group = new L.featureGroup([marker1, marker2, marker3]);
+  //map.fitBounds(group.getBounds());
+  // var bounds = L.latLngBounds(restaurantsGroup);
+  // map.fitBounds(bounds);
 
 
 }//drawMarkerSelect
@@ -445,44 +454,35 @@ dc.renderAll(groupname);
 
 
 // Pagination for the list view
-  var ofs = 0, pag = 10;
-  function display() {
-	//   var all = xf.groupAll();
-	//
-	//   count = dc.dataCount('.dc-data-count')
-	//       .dimension(xf)
-	//       .group(all);
-	//
-	// count /* dc.dataCount('.dc-data-count', 'chartGroup'); */
-	//    .dimension(xf)
-	//    .group(all)
-	//    .html({
-    //         some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
-    //             ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a>',
-    //     });
-
+  var ofs = 1, pag = 10;
+  function displayPagination() {
       d3.select('#begin')
           .text(ofs);
       d3.select('#end')
-          .text(ofs+pag-1);
+          .text(function(){
+			  var allNum = restaurantNamesDimension.top(Number.POSITIVE_INFINITY);
+			  if(allNum-ofs < pag)
+			  return  (allNum-ofs);
+			  else return (ofs+pag-1);
+		  });
       d3.select('#last')
           .attr('disabled', ofs-pag<0 ? 'true' : null);
       d3.select('#next')
-          .attr('disabled', ofs+pag>=xf.size() ? 'true' : null);
-      d3.select('#size').text(xf.size());
+          .attr('disabled', ofs+pag>=restaurantNamesDimension.top(Number.POSITIVE_INFINITY).length ? 'true' : null);
+      d3.select('#size').text(restaurantNamesDimension.top(Number.POSITIVE_INFINITY).length);
   }
-  function update() {
+  function updatePagination() {
       datatable.beginSlice(ofs);
       datatable.endSlice(ofs+pag);
-      display();
+      displayPagination();
   }
   function next() {
       ofs += pag;
-      update();
+      updatePagination();
       datatable.redraw();
   }
   function last() {
       ofs -= pag;
-      update();
+      updatePagination();
       datatable.redraw();
   }
