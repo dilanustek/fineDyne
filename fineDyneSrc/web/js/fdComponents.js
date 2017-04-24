@@ -131,7 +131,7 @@ function drawMarkerSelect(data) {
 	.dimension(priceDimension)
 	.group(priceGroup)
 	.width(300)
-	.height(200)
+	.height(150)
 	.renderLabel(false)
 	.x(d3.scale.ordinal())
 	.xUnits(dc.units.ordinal)
@@ -186,14 +186,13 @@ function drawMarkerSelect(data) {
 	markerChart = dc_leaflet.markerChart(".map", groupname)
 	.dimension(restaurantNamesDimension)
 	.group(restaurantsGroup)
-	.width(600)
-	.height(500)
+	.width(500)
+	.height(400)
 	.center([43.733372, -79.354782])
 	.zoom(11)
 	.cluster(true)
 	.clusterOptions({
-		disableClusteringAtZoom: 16,
-		spiderfyOnMaxZoom: false
+		disableClusteringAtZoom: 16
 	})
 	.mapOptions({
 		riseOnHover: true
@@ -255,24 +254,8 @@ function drawMarkerSelect(data) {
 return returnStr;
 });
 
-/*map = marker.map();
 
-var greenIcon = L.icon({
-iconUrl: 'http://www.clker.com/cliparts/Z/x/U/0/B/3/red-pin.svg',
-shadowUrl: 'http://www.clker.com/cliparts/Z/x/U/0/B/3/red-pin.svg',
-
-iconSize:     [38, 95], // size of the icon
-shadowSize:   [50, 64], // size of the shadow
-iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-shadowAnchor: [4, 62],  // the same for the shadow
-popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-});
-
-L.marker([43.733372, -79.354782], {icon: greenIcon}).addTo(map);
-
-var greenIcon = new LeafIcon({iconUrl: 'leaf-green.png'});
-
-
+/*
 setTimeout(function(){
 map = marker.map();
 
@@ -298,7 +281,7 @@ starBar = dc.barChart(".starBar",groupname)
 .dimension(starsDimension)
 .group(starsGroup)
 .width(300)
-.height(200)
+.height(150)
 .renderLabel(false)
 .x(d3.scale.ordinal())
 .xUnits(dc.units.ordinal)
@@ -440,7 +423,24 @@ $('.data-table').on('click', '.data-table-head', function() {
 
 
 dc.renderAll(groupname);
-}
+
+
+ map = markerChart.map();
+
+  var greenIcon = L.icon({
+  iconUrl: 'http://icon-park.com/imagefiles/location_pin_sphere_red.png',
+
+  iconSize:     [20, 45], // size of the icon
+  iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+  shadowAnchor: [4, 62],  // the same for the shadow
+  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+
+  L.marker([43.7649093, -79.2591327], {icon: greenIcon}).addTo(map);
+
+
+
+}//drawMarkerSelect
 
 
 

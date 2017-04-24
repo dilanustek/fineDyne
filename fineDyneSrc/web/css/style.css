@@ -46,10 +46,13 @@
   display: flex;
   align-items: center;
   margin-left: 100px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .controlButtons {
   font-size: 14px;
+  background-color: #e3e5f2;
 }
 
 .pinnedList {

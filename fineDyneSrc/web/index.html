@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="../bower_components/fakeLoader/fakeLoader.css">
 	<link type="text/css" href="css/style.css" rel="stylesheet"/>
 
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -29,6 +30,7 @@
 	<script type="text/javascript" src="js/leaflet.js"></script>
 	<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
 	<script type="text/javascript" src="js/dc.leaflet.js"></script>
+	<script src="../bower_components/fakeLoader/fakeLoader.min.js"></script>
 
 	<script type="text/javascript" src="js/fdComponents.js"></script>
 
@@ -42,12 +44,10 @@
     		<h1>FineDyne  <font size="5">in Toronto</font></h1>
 		</div>
 
+		<div id="fakeLoader"></div>
+
 		<div class="inRowOppositeSides">
 				<div class="inColumn">
-
-					<div class="controls">
-							<button type="btn" class="controlButtons" onclick="resetCharts()">Reset All</button>
-					</div>
 					<div class="inColumn">
 								<img src="css/images/dollar.png" width="20px">
 								<div class="priceBar"></div>
@@ -60,7 +60,9 @@
 								<p><font size="4.5"><b>Categories</b></font></p>
 								<div class="categoriesBar"></div>
 					</div>
-
+					<div class="controls">
+							<button type="btn" class="controlButtons" onclick="resetCharts()">Reset All</button>
+					</div>
 				</div>
 
 				<div class="inColumn">
@@ -95,6 +97,19 @@
 		</div>
 
 </div>
+
+<script type="text/javascript">
+$("#fakeloader").fakeLoader();
+
+
+	$("#fakeLoader").fakeLoader({
+		timeToHide:1500, //Time in milliseconds for fakeLoader disappear
+		zIndex:"999",//Default zIndex
+		spinner:"spinner1",//Options: 'spinner1', 'spinner2', 'spinner3', 'spinner4', 'spinner5', 'spinner6', 'spinner7'
+		bgColor:"#ffffff", //Hex, RGB or RGBA colors
+		imagePath:"css/images/patrick.gif" //If you want can you insert your custom image
+	});
+</script>
 </div>
 
 </body>
